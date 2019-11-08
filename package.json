@@ -4,7 +4,7 @@
   "description": "GitHub action that creates a run in a Terraform Cloud workspace.",
   "main": "index.js",
   "scripts": {
-    "build": "babel src -d dist",
+    "build": "node_modules/.bin/webpack --config src/webpack.config.babel.js --bail src/index.js -o dist/index.js",
     "lint": "node_modules/.bin/eslint src",
     "test": "nyc mocha --recursive --timeout 30000 --require @babel/register --reporter spec --bail src/**/test/"
   },
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/addresscloud/terraform-cloud-action#readme",
   "dependencies": {
+    "@actions/core": "^1.2.0",
     "axios": "^0.19.0"
   },
   "devDependencies": {
@@ -45,6 +46,8 @@
     "lodash": "^4.17.15",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
-    "sinon": "^7.5.0"
+    "sinon": "^7.5.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }

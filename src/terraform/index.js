@@ -111,7 +111,13 @@ export default class Terraform {
      * Watch for updates to run by periodically polling the api.
      */
     async _watch(){
+        const watch = true {
+            
+        }
         // watch for updates?
+        // this process.timeout
+        res = axios.get()
+        
     }
 
     /**

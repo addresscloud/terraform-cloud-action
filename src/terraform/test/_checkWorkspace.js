@@ -17,7 +17,9 @@ describe('Terraform _checkWorkspace test suite', () => {
         const terraform = new Terraform('token', 'org')
         sinon.stub(terraform.axios, 'get').returns({
                 data: {
+                    data: {
                     id: '1'
+                    }
                 }
         })
         const res = await terraform._checkWorkspace('workspace')

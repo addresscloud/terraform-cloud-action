@@ -4,8 +4,5 @@
     ],
     "plugins": [
       "@babel/plugin-transform-runtime"
-    ],
-    "ignore": [
-      "src/terraform/test/*.js"
     ]
   }

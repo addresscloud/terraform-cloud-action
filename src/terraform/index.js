@@ -38,13 +38,13 @@ export default class Terraform {
             if (workspace.indexOf(' ') >= 0) { throw new Error(`Workspace name should not contain spaces.`) }
             const res = await this.axios.get(`/organizations/${this.org}/workspaces/${workspace}`)
             console.log(res)
-            if (!res.data) {
+            if (!res.data.data) {
                 throw new Error('No data returned from request.')
             }
-            else if (!res.data.id) {
+            else if (!res.data.data.id) {
                 throw new Error('Workspace not found.')
             }
-            return res.data.id
+            return res.data.data.id
         } catch (err) {
             throw new Error(`Error checking the workspace: ${err.message}`)
         }
@@ -67,13 +67,13 @@ export default class Terraform {
                 }
             }
             const res = await this.axios.post(`/organizations/${this.org}/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
-            if (!res.data) {
+            if (!res.data.data) {
                 throw new Error('No data returned from request.')
             }
-            else if (!res.data.attributes || !res.data.attributes['upload-url']) {
+            else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
                 throw new Error('No upload URL was returned.')
             }
-            return res.data.attributes['upload-url']
+            return res.data.data.attributes['upload-url']
         } catch (err) {
             throw new Error(`Error creating the config version: ${err.message}`)
         }
@@ -120,13 +120,13 @@ export default class Terraform {
                 }
               }
             const res = await this.axios.post('/runs', JSON.stringify(run))
-            if (!res.data) {
+            if (!res.data.data) {
                 throw new Error('No data returned from request.')
             }
-            else if (!res.data.id) {
+            else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
             }
-                return res.data.id
+                return res.data.data.id
         } catch (err) {
                 throw new Error(`Error requesting the run: ${err.message}`)
 

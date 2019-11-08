@@ -17,8 +17,11 @@ describe('Terraform _run test suite', () => {
         const terraform = new Terraform('token', 'org')
         sinon.stub(terraform.axios, 'post').returns({
             data: {
-                id: '1'
+                data: {
+                    id: '1'
+                }
             }
+
         })
         const res = await terraform._run('1')
         expect(res).to.equal('1')

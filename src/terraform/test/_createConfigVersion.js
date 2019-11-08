@@ -17,8 +17,10 @@ describe('Terraform _createConfigVersion test suite', () => {
         const terraform = new Terraform('token', 'org')
         sinon.stub(terraform.axios, 'post').returns({
                 data: {
-                    attributes: {
-                        'upload-url': 'mock-url'
+                        data: {
+                            attributes: {
+                                'upload-url': 'mock-url'
+                        }
                     }
                 }
         })

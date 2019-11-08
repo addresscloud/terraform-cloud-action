@@ -103,24 +103,25 @@ export default class Terraform {
         
         try {
             const run = {
-                "data": {
-                  "attributes": {
+                data: {
+                  attributes: {
                     "is-destroy":false
                   },
-                  "type":"runs",
-                  "relationships": {
-                    "workspace": {
-                      "data": {
-                        "type": "workspaces",
-                        "id": workspaceId
+                  type:"runs",
+                  relationships: {
+                    workspace: {
+                      data: {
+                        type: "workspaces",
+                        id: workspaceId
                       }
                     }
                   }
                 }
               }
+            // send the run
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data.data) {
-                throw new Error('No data returned from request.')
+                throw new Error('No data returned from request..')
             }
             else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
@@ -157,7 +158,6 @@ export default class Terraform {
             const uploadUrl = await this._createConfigVersion(workspaceId)
             await this._uploadConfiguration(uploadUrl, filePath)
             const runId = this._run()
-            
             //this._watch()
             //TODO - exit status
             return runId            
@@ -166,5 +166,6 @@ export default class Terraform {
         }
     }
 }
+
 
 //curl -s --header "Authorization: Bearer $token" --header "Content-Type: application/vnd.api+json" --data @configversion.json "https://${ADDRESS}/api/v2/workspaces/${workspace_id}/configuration-versions")

@@ -65,7 +65,7 @@ export default class Terraform {
                     }
                 }
             }
-            const res = await this.axios.post(`/organizations/${this.org}/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
+            const res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
             if (!res.data.data) {
                 throw new Error('No data returned from request.')
             }

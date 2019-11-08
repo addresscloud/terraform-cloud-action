@@ -3,7 +3,6 @@
  */
 import axios from 'axios'
 import fs from 'fs'
-import { ENGINE_METHOD_DIGESTS } from 'constants'
 
 export default class Terraform {
 

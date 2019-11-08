@@ -37,7 +37,6 @@ export default class Terraform {
         try {
             if (workspace.indexOf(' ') >= 0) { throw new Error(`Workspace name should not contain spaces.`) }
             const res = await this.axios.get(`/organizations/${this.org}/workspaces/${workspace}`)
-            console.log(res)
             if (!res.data.data) {
                 throw new Error('No data returned from request.')
             }

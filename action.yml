@@ -2,7 +2,7 @@
 name: 'Terraform Cloud'
 description: 'Submit a run to Terraform Cloud.'
 inputs:
-  tfToken:  # id of input
+  tfToken:
     description: 'Terraform Cloud Token.'
     required: true
   tfOrg:
@@ -14,9 +14,9 @@ inputs:
     description: 'Archive (.tar.gz) to submit.'
   
 outputs:
-  run_id: # id of output
+  runId: # id of output
     description: 'The Id of the run.'
-    
+
 runs:
   using: 'node12'
   main: 'dist/index.js'

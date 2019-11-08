@@ -157,12 +157,10 @@ export default class Terraform {
     async run(workspace, filePath){
         try {
             const workspaceId = await this._checkWorkspace(workspace)
-            console.log(`workspaceId: ${workspaceId}`)
             const uploadUrl = await this._createConfigVersion(workspaceId)
             await this._uploadConfiguration(uploadUrl, filePath)
             const runId = await this._run(workspaceId)
-            //this._watch()
-            //TODO - exit status
+            
             return runId            
         } catch (err) {
             throw err

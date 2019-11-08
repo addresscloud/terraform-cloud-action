@@ -163,7 +163,7 @@ export default class Terraform {
             const uploadUrl = await this._createConfigVersion(workspaceId)
             console.log(`uploadUrl: ${uploadUrl}`)
             const resUpload = await this._uploadConfiguration(uploadUrl, filePath)
-            console.log(JSON.stringify(resUpload))
+            //console.log(JSON.stringify(resUpload))
             const runId = await this._run(workspaceId)
             return runId            
         } catch (err) {

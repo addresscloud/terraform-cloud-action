@@ -4,6 +4,7 @@
   "description": "GitHub action that creates a run in a Terraform Cloud workspace.",
   "main": "index.js",
   "scripts": {
+    "build": "babel src -d dist",
     "lint": "node_modules/.bin/eslint src",
     "test": "nyc mocha --recursive --timeout 30000 --require @babel/register --reporter spec --bail src/**/test/"
   },

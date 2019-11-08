@@ -3,6 +3,7 @@
  */
 import axios from 'axios'
 import fs from 'fs'
+import { ENGINE_METHOD_DIGESTS } from 'constants'
 
 export default class Terraform {
 
@@ -77,7 +78,13 @@ export default class Terraform {
         }
     }
 
-    async _uploadConfiguration(filePath, uploadUrl) {
+    /**
+     * Uploads assets to new configuration version.
+     * 
+     * @param {string} uploadUrl - Url for configuration upload.
+     * @param {string} filePath - tar.gz file for upload.
+     */
+    async _uploadConfiguration(uploadUrl, filePath) {
         
         try {
             await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
@@ -86,13 +93,40 @@ export default class Terraform {
         }
     }
 
+    /**
+     * Requests run of new configuration.
+     */
     async _run(){
 
         // make run file JSON?
         
         try {
-            await this.axios.post('/runs', )
+            await this.axios.post('/runs')
+        } catch (err) {
+            throw new Error(`There was an error requesting the run: ${err.message}`)
         }
+    }
+
+    /**
+     * Watch for updates to run by periodically polling the api.
+     */
+    async _watch(){
+        // watch for updates?
+    }
+
+    /**
+     * Create, initialize and start a new workspace run.
+     * 
+     * @param {string} workspace - Workspace name.
+     * @param {*} filePath - Path to tar.gz file with Terraform configuration.
+     */
+    async run(workspace, filePath){
+        const workspaceId = await this._checkWorkspace(workspace)
+        const uploadUrl = await this._createConfigVersion(workspaceId)
+        await this._uploadConfiguration(uploadUrl, filePath)
+        await this._run()
+        this._watch()
+        //TODO - exit status
     }
 }
 

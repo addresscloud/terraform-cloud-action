@@ -85,9 +85,11 @@ export default class Terraform {
      * @param {string} filePath - tar.gz file for upload.
      */
     async _uploadConfiguration(uploadUrl, filePath) {
-        
+        console.log(uploadUrl)
+        console.log(filePath)
         try {
-            await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
+            const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
+            return res
         } catch (err) {
             throw new Error(`Error uploading the configuration: ${err.message}`)
         }

@@ -16,7 +16,6 @@ export default class Terraform {
      * @param {number} [sleepDuration=5] - Duration to wait before requesting status.
      */
     constructor(token, org, address = `app.terraform.io`, sleepDuration = 5) {
-        this.sleepDuration = sleepDuration
         this.axios = axios.create({
             baseURL: `https://${address}/api/v2`,
             headers: {
@@ -24,6 +23,8 @@ export default class Terraform {
                 'Content-Type': `application/vnd.api+json`              
             }
         })
+        this.sleepDuration = sleepDuration
+        this.org = org
     }
 
     /**
@@ -36,7 +37,7 @@ export default class Terraform {
 
         try {
             if (workspace.indexOf(' ') >= 0) { throw new Error(`Workspace name should not contain spaces.`) }
-            const res = await this.axios.get(`/organizations/${org}/workspaces/${workspace}`)
+            const res = await this.axios.get(`/organizations/${this.org}/workspaces/${workspace}`)
             if (!res.data) {
                 throw new Error('No data returned from request.')
             }
@@ -45,7 +46,7 @@ export default class Terraform {
             }
             return res.data.id
         } catch (err) {
-            throw new Error(`There was an error checking the workspace: ${err.message}`)
+            throw new Error(`Error checking the workspace: ${err.message}`)
         }
     }
 
@@ -58,14 +59,14 @@ export default class Terraform {
 
         try {
             const configVersion = {
-                "data": {
-                  "type": "configuration-versions",
-                  "attributes": {
+                data: {
+                  type: "configuration-versions",
+                  attributes: {
                     "auto-queue-runs": false
                     }
                 }
             }
-            const res = await this.axios.post(`/organizations/${org}/workspaces/${workspaceId}/configuration-versions`, configVersion)
+            const res = await this.axios.post(`/organizations/${this.org}/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
             if (!res.data) {
                 throw new Error('No data returned from request.')
             }
@@ -74,7 +75,7 @@ export default class Terraform {
             }
             return res.data.attributes['upload-url']
         } catch (err) {
-            throw new Error(`There was an error creating the config version: ${err.message}`)
+            throw new Error(`Error creating the config version: ${err.message}`)
         }
     }
 
@@ -89,28 +90,53 @@ export default class Terraform {
         try {
             await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
         } catch (err) {
-            throw new Error(`There was an error uploading the configuration: ${err.message}`)
+            throw new Error(`Error uploading the configuration: ${err.message}`)
         }
     }
 
     /**
      * Requests run of new configuration.
+     * 
+     * @param {string} workspaceId - Workspace Id.
+     * @returns {string} - Run Id.
      */
-    async _run(){
-
-        // make run file JSON?
+    async _run(workspaceId){
         
         try {
-            await this.axios.post('/runs')
+            const run = {
+                "data": {
+                  "attributes": {
+                    "is-destroy":false
+                  },
+                  "type":"runs",
+                  "relationships": {
+                    "workspace": {
+                      "data": {
+                        "type": "workspaces",
+                        "id": workspaceId
+                      }
+                    }
+                  }
+                }
+              }
+            const res = await this.axios.post('/runs', JSON.stringify(run))
+            if (!res.data) {
+                throw new Error('No data returned from request.')
+            }
+            else if (!res.data.id) {
+                throw new Error('Run Id not found.')
+            }
+                return res.data.id
         } catch (err) {
-            throw new Error(`There was an error requesting the run: ${err.message}`)
+                throw new Error(`Error requesting the run: ${err.message}`)
+
         }
     }
 
     /**
      * Watch for updates to run by periodically polling the api.
      */
-    async _watch(){
+    /*async _watch(){
         const watch = true {
             
         }
@@ -118,7 +144,7 @@ export default class Terraform {
         // this process.timeout
         res = axios.get()
         
-    }
+    }*/
 
     /**
      * Create, initialize and start a new workspace run.
@@ -130,9 +156,11 @@ export default class Terraform {
         const workspaceId = await this._checkWorkspace(workspace)
         const uploadUrl = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(uploadUrl, filePath)
-        await this._run()
-        this._watch()
+        const runId = this._run()
+        
+        //this._watch()
         //TODO - exit status
+        return runId
     }
 }
 

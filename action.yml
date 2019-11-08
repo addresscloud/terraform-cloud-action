@@ -1,0 +1,21 @@
+# action.yml
+name: 'Terraform Cloud'
+description: 'Submit a run to Terraform Cloud.'
+inputs:
+  tfToken:  # id of input
+    description: 'Terraform Cloud Token.'
+    required: true
+  tfOrg:
+    description: 'Terraform Cloud Organization.'
+    required: true
+  tfWorkspace:
+    description: Terraform Cloud Workspace.'
+  filePath:
+    description: 'Archive (.tar.gz) to submit.'
+  
+outputs:
+  run_id: # id of output
+    description: 'The Id of the run.'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

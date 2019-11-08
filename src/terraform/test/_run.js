@@ -13,10 +13,50 @@ describe('Terraform _run test suite', () => {
         expect(terraform instanceof Terraform).to.equal(true)
     })
 
-    it('can succesfully upload file', async() => {
+    it('can succesfully initiate a run', async() => {
         const terraform = new Terraform('token', 'org')
-        sinon.stub(terraform.axios, 'put').returns('success')
+        sinon.stub(terraform.axios, 'post').returns({
+            data: {
+                id: '1'
+            }
+        })
         const res = await terraform._run('1')
-        expect(res).to.equal('mock-url')
+        expect(res).to.equal('1')
+    })
+
+    it('catches no data returned', async() => {
+        const terraform = new Terraform('token', 'org')
+        sinon.stub(terraform.axios, 'post').returns({})
+        let message = "__PRETEST__"
+        try {
+            await terraform._run('1')
+        } catch (err) {
+            message = err.message
+        }
+        expect(message).to.equal('Error requesting the run: No data returned from request.')
+    })
+
+    it('catches no id returned', async() => {
+        const terraform = new Terraform('token', 'org')
+        sinon.stub(terraform.axios, 'post').returns({data: {}})
+        let message = "__PRETEST__"
+        try {
+            await terraform._run('1')
+        } catch (err) {
+            message = err.message
+        }
+        expect(message).to.equal('Error requesting the run: Run Id not found.')
+    })
+
+    it('catches axios error', async() => {
+        const terraform = new Terraform('token', 'org')
+        sinon.stub(terraform.axios, 'post').throws(new Error(`Axios error.`))
+        let message = "__PRETEST__"
+        try {
+            await terraform._run('1')
+        } catch (err) {
+            message = err.message
+        }
+        expect(message).to.equal('Error requesting the run: Axios error.')
     })
 })

@@ -35,7 +35,7 @@ describe('Terraform _createConfigVersion test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('There was an error creating the config version: No data returned from request.')
+        expect(message).to.equal('Error creating the config version: No data returned from request.')
     })
 
     it('catches no upload-url returned', async() => {
@@ -47,7 +47,7 @@ describe('Terraform _createConfigVersion test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('There was an error creating the config version: No upload URL was returned.')
+        expect(message).to.equal('Error creating the config version: No upload URL was returned.')
     })
 
     it('catches axios error', async() => {
@@ -59,7 +59,7 @@ describe('Terraform _createConfigVersion test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('There was an error creating the config version: Axios error.')
+        expect(message).to.equal('Error creating the config version: Axios error.')
     })
 
 })

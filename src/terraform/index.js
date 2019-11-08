@@ -85,8 +85,8 @@ export default class Terraform {
      * @param {string} filePath - tar.gz file for upload.
      */
     async _uploadConfiguration(uploadUrl, filePath) {
-        console.log(uploadUrl)
-        console.log(filePath)
+        //console.log(uploadUrl)
+        //console.log(filePath)
         try {
             const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
             return res
@@ -120,8 +120,8 @@ export default class Terraform {
                   }
                 }
               }
-            console.log(workspaceId)
-            console.log(run)
+            //console.log(workspaceId)
+            //console.log(run)
             // send the run
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data.data) {
@@ -159,9 +159,9 @@ export default class Terraform {
     async run(workspace, filePath){
         try {
             const workspaceId = await this._checkWorkspace(workspace)
-            console.log(`workspaceId: ${workspaceId}`)
+            //console.log(`workspaceId: ${workspaceId}`)
             const uploadUrl = await this._createConfigVersion(workspaceId)
-            console.log(`uploadUrl: ${uploadUrl}`)
+            //console.log(`uploadUrl: ${uploadUrl}`)
             const resUpload = await this._uploadConfiguration(uploadUrl, filePath)
             //console.log(JSON.stringify(resUpload))
             const runId = await this._run(workspaceId)

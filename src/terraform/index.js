@@ -118,6 +118,8 @@ export default class Terraform {
                   }
                 }
               }
+            console.log(workspaceId)
+            console.log(run)
             // send the run
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data.data) {
@@ -157,7 +159,7 @@ export default class Terraform {
             const workspaceId = await this._checkWorkspace(workspace)
             const uploadUrl = await this._createConfigVersion(workspaceId)
             await this._uploadConfiguration(uploadUrl, filePath)
-            const runId = this._run()
+            const runId = await this._run()
             //this._watch()
             //TODO - exit status
             return runId            

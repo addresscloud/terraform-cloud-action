@@ -157,9 +157,10 @@ export default class Terraform {
     async run(workspace, filePath){
         try {
             const workspaceId = await this._checkWorkspace(workspace)
+            console.log(`workspaceId: ${workspaceId}`)
             const uploadUrl = await this._createConfigVersion(workspaceId)
             await this._uploadConfiguration(uploadUrl, filePath)
-            const runId = await this._run()
+            const runId = await this._run(workspaceId)
             //this._watch()
             //TODO - exit status
             return runId            
@@ -169,5 +170,3 @@ export default class Terraform {
     }
 }
 
-
-//curl -s --header "Authorization: Bearer $token" --header "Content-Type: application/vnd.api+json" --data @configversion.json "https://${ADDRESS}/api/v2/workspaces/${workspace_id}/configuration-versions")

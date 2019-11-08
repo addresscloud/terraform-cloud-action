@@ -11,7 +11,7 @@ async function main(){
         const id = await tf.run(workspace, filePath)
         console.log(id)
     } catch (error) {
-        console.error(error)
+        core.setFailed(error.message);
     }
 }
 

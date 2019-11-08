@@ -37,6 +37,7 @@ export default class Terraform {
         try {
             if (workspace.indexOf(' ') >= 0) { throw new Error(`Workspace name should not contain spaces.`) }
             const res = await this.axios.get(`/organizations/${this.org}/workspaces/${workspace}`)
+            console.log(res)
             if (!res.data) {
                 throw new Error('No data returned from request.')
             }
@@ -152,14 +153,18 @@ export default class Terraform {
      * @param {*} filePath - Path to tar.gz file with Terraform configuration.
      */
     async run(workspace, filePath){
-        const workspaceId = await this._checkWorkspace(workspace)
-        const uploadUrl = await this._createConfigVersion(workspaceId)
-        await this._uploadConfiguration(uploadUrl, filePath)
-        const runId = this._run()
-        
-        //this._watch()
-        //TODO - exit status
-        return runId
+        try {
+            const workspaceId = await this._checkWorkspace(workspace)
+            const uploadUrl = await this._createConfigVersion(workspaceId)
+            await this._uploadConfiguration(uploadUrl, filePath)
+            const runId = this._run()
+            
+            //this._watch()
+            //TODO - exit status
+            return runId            
+        } catch (err) {
+            throw err
+        }
     }
 }
 

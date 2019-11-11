@@ -19,21 +19,42 @@ This action submits a run to a Terraform Cloud workspace which performs a plan a
 Terraform Cloud requires a .tar.gz file containing Terraform configuration and build artifacts if required. This example GitHub workflow demonstrates building Lambda functions (output in the `build` directory), and then archiving along with Terraform configuration (in the `infrastructure` directory) for deployment. 
 
 ```
-@actions/terraform-cloud-usage
+- name: Create tar gz file
+  run: |
+    tar --exclude *.terraform* -zcvf build.tar.gz build infrastructure
 
-# npm run build
+- name: Send run to Terraform Cloud
+  uses: addresscloud/terraform-cloud-action@master
+  with:
+    tfToken: ${{ secrets.TERRAFORM_TOKEN }}
+    tfOrg: '<ORGANISATION>'
+    tfWorkspace: 'my-lambda-service'
+    filePath: './build.tar.gz'
 ```
 
 ### Inputs
 
-- token
-- organization
-- workspace
-- artifacts
+#### tfToken
+ 
+**Required** Terraform Cloud access token.
 
-### Outpus
+#### tfOrganization
 
-- run Id - the identfier of the run in Terraform Cloud.
+**Required** Terraform Cloud organization.
+
+#### tfWorkspace
+
+**Required** Name of existing Terraform Cloud workspace.
+
+### `filePath`
+
+**Required** Path to .tar.gz archive with Terraform configuration.
+
+### Outputs
+
+#### `run_id` 
+
+The identfier of the run in Terraform Cloud.
 
 ### Notes
 
@@ -46,11 +67,23 @@ If your repository contains multiple modules, upload the top-level directory and
 
 ## Contributing
 
-PRs accepted.
+PRs accepted with unit tests.
+
+To run tests:
+
+```sh
+npm run test
+```
+
+To check code lint:
+
+```sh
+npm run lint
+```
 
 Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
-This Action was based on the example Terraform Enterprise script at: 
+This Action was based on the example Terraform Enterprise script at: https://github.com/hashicorp/terraform-guides/tree/master/operations/automation-script
 
 ## License
 

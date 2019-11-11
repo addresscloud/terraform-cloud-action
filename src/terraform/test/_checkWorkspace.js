@@ -52,7 +52,7 @@ describe('Terraform _checkWorkspace test suite', () => {
 
     it('catches no id returned', async() => {
         const terraform = new Terraform('token', 'org')
-        sinon.stub(terraform.axios, 'get').returns({data: {}})
+        sinon.stub(terraform.axios, 'get').returns({data: {data: {}}})
         let message = "__PRETEST__"
         try {
             await terraform._checkWorkspace('workspace')

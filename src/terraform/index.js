@@ -37,7 +37,7 @@ export default class Terraform {
         try {
             if (workspace.indexOf(' ') >= 0) { throw new Error(`Workspace name should not contain spaces.`) }
             const res = await this.axios.get(`/organizations/${this.org}/workspaces/${workspace}`)
-            if (!res.data.data) {
+            if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
             }
             else if (!res.data.data.id) {
@@ -66,7 +66,7 @@ export default class Terraform {
                 }
             }
             const res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
-            if (!res.data.data) {
+            if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
             }
             else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
@@ -119,15 +119,14 @@ export default class Terraform {
                 }
               }
             const res = await this.axios.post('/runs', JSON.stringify(run))
-            if (!res.data.data) {
-                throw new Error('No data returned from request..')
+            if (!res.data || !res.data.data) {
+                throw new Error('No data returned from request.')
             }
             else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
             }
                 return res.data.data.id
         } catch (err) {
-                console.log(err)
                 throw new Error(`Error requesting the run: ${err.message}`)
 
         }
@@ -147,7 +146,6 @@ export default class Terraform {
             const runId = await this._run(workspaceId)
             return runId            
         } catch (err) {
-            // TODO- if error is 422 this indicates a state-lock may be in play.
             throw err
         }
     }

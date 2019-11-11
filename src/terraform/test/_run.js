@@ -41,7 +41,7 @@ describe('Terraform _run test suite', () => {
 
     it('catches no id returned', async() => {
         const terraform = new Terraform('token', 'org')
-        sinon.stub(terraform.axios, 'post').returns({data: {}})
+        sinon.stub(terraform.axios, 'post').returns({data: {data:{}}})
         let message = "__PRETEST__"
         try {
             await terraform._run('1')

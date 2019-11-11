@@ -1,9 +1,9 @@
-name: Run lint and tests.
+name: Run tests
 on: 
   push:
 
 jobs:
-  lint-and-test:
+  test:
 
     runs-on: ubuntu-latest
 

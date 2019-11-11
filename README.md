@@ -1,7 +1,6 @@
 # terraform-cloud-action
 
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-TODO: Put more badges here.
+[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme) [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Faddresscloud%2Fterraform-cloud-action%2Fbadge%3Fref%3Dmaster&style=flat-square)](https://actions-badge.atrox.dev/addresscloud/terraform-cloud-action/goto?ref=master) [![codecov](https://codecov.io/gh/addresscloud/terraform-cloud-action/branch/master/graph/badge.svg)](https://codecov.io/gh/addresscloud/terraform-cloud-action)
 
 > An action to run Terraform Cloud workspaces
 

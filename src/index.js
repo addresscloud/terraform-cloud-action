@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import Terraform from './terraform'
 
-async function main(){
+export default async function main(){
     try {
 
         const token = core.getInput('tfToken'),
@@ -18,5 +18,8 @@ async function main(){
     }
 }
 
-main()
+if (require.main === module) {
+    main();
+}
+
 

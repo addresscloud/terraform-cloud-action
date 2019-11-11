@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node_modules/.bin/webpack --config src/webpack.config.babel.js --bail src/index.js -o dist/index.js",
     "lint": "node_modules/.bin/eslint src",
-    "test": "nyc mocha --recursive --timeout 30000 --require @babel/register --reporter spec --bail src/**/test/"
+    "test": "nyc mocha --recursive --timeout 30000 --require @babel/register --reporter spec --bail src/test.js src/**/test/"
   },
   "repository": {
     "type": "git",

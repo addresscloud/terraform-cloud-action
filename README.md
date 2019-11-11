@@ -28,6 +28,8 @@ This action submits a run to a Terraform Cloud workspace which performs a plan a
     filePath: './build.tar.gz'
 ```
 
+![Example workflow](example.png)
+
 ### Inputs
 
 #### tfToken

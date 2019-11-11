@@ -85,8 +85,6 @@ export default class Terraform {
      * @param {string} filePath - tar.gz file for upload.
      */
     async _uploadConfiguration(uploadUrl, filePath) {
-        //console.log(uploadUrl)
-        //console.log(filePath)
         try {
             const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
             return res
@@ -120,9 +118,6 @@ export default class Terraform {
                   }
                 }
               }
-            //console.log(workspaceId)
-            //console.log(run)
-            // send the run
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data.data) {
                 throw new Error('No data returned from request..')
@@ -132,23 +127,11 @@ export default class Terraform {
             }
                 return res.data.data.id
         } catch (err) {
+                console.log(err)
                 throw new Error(`Error requesting the run: ${err.message}`)
 
         }
     }
-
-    /**
-     * Watch for updates to run by periodically polling the api.
-     */
-    /*async _watch(){
-        const watch = true {
-            
-        }
-        // watch for updates?
-        // this process.timeout
-        res = axios.get()
-        
-    }*/
 
     /**
      * Create, initialize and start a new workspace run.
@@ -159,14 +142,12 @@ export default class Terraform {
     async run(workspace, filePath){
         try {
             const workspaceId = await this._checkWorkspace(workspace)
-            //console.log(`workspaceId: ${workspaceId}`)
             const uploadUrl = await this._createConfigVersion(workspaceId)
-            //console.log(`uploadUrl: ${uploadUrl}`)
             const resUpload = await this._uploadConfiguration(uploadUrl, filePath)
-            //console.log(JSON.stringify(resUpload))
             const runId = await this._run(workspaceId)
             return runId            
         } catch (err) {
+            // TODO- if error is 422 this indicates a state-lock may be in play.
             throw err
         }
     }

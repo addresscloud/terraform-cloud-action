@@ -13,14 +13,13 @@
 
 ## Usage
 
-This action submits a run to a Terraform Cloud workspace which performs a plan and then apply. Once the run is succesfully submitted the action returns a success, leaving the apply to continue to run in Terraform Cloud. Variables and settings should be configured using the Terraform Cloud UI. Terraform Cloud requires a .tar.gz archive containing the Terraform configuration, and build artifacts if required. The example shows a GitHub workflow archiving Lambda functions (in the `build` directory) alongside a Terraform configuration (in the `infrastructure` directory) for deployment. The archive is then passed to the action for deployment to Terraform Cloud.
+This action submits a run to a Terraform Cloud workspace which performs a plan and then apply. Once the run is succesfully submitted the action returns a success, leaving the plan and apply to continue to run in Terraform Cloud. Variables and settings should be configured using the Terraform Cloud UI. Terraform Cloud requires a .tar.gz archive containing the Terraform configuration, and build artifacts if required. The example shows a GitHub workflow archiving Lambda functions (in the `build` directory) alongside a Terraform configuration (in the `infrastructure` directory) for deployment. The archive is then passed to the action for deployment by Terraform Cloud.
 
-```
+```yml
 - name: Create tar gz file
-  run: |
-    tar --exclude *.terraform* -zcvf build.tar.gz build infrastructure
+  run: tar --exclude *.terraform* -zcvf build.tar.gz build infrastructure
 
-- name: Send run to Terraform Cloud
+- name: Terraform Cloud
   uses: addresscloud/terraform-cloud-action@master
   with:
     tfToken: ${{ secrets.TERRAFORM_TOKEN }}
@@ -43,13 +42,13 @@ This action submits a run to a Terraform Cloud workspace which performs a plan a
 
 **Required** Name of existing Terraform Cloud workspace.
 
-### `filePath`
+#### `filePath`
 
 **Required** Path to .tar.gz archive with Terraform configuration.
 
 ### Outputs
 
-#### `run_id` 
+#### `runId` 
 
 The identfier of the run in Terraform Cloud.
 

@@ -4,8 +4,6 @@
 
 > An action to run Terraform Cloud workspaces
 
-This action submits a run to a Terraform Cloud workspace which performs a plan and then apply. Once the plan is complete the action returns a success, leaving the apply to continue to run in Terraform Cloud. Variables and settings should be configured using the Terraform Cloud UI.
-
 ## Table of Contents
 
 - [Usage](#usage)
@@ -15,7 +13,7 @@ This action submits a run to a Terraform Cloud workspace which performs a plan a
 
 ## Usage
 
-Terraform Cloud requires a .tar.gz file containing Terraform configuration and build artifacts if required. This example GitHub workflow demonstrates building Lambda functions (output in the `build` directory), and then archiving along with Terraform configuration (in the `infrastructure` directory) for deployment. 
+This action submits a run to a Terraform Cloud workspace which performs a plan and then apply. Once the run is succesfully submitted the action returns a success, leaving the apply to continue to run in Terraform Cloud. Variables and settings should be configured using the Terraform Cloud UI. Terraform Cloud requires a .tar.gz archive containing the Terraform configuration, and build artifacts if required. The example shows a GitHub workflow archiving Lambda functions (in the `build` directory) alongside a Terraform configuration (in the `infrastructure` directory) for deployment. The archive is then passed to the action for deployment to Terraform Cloud.
 
 ```
 - name: Create tar gz file

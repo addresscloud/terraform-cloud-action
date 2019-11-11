@@ -27,7 +27,7 @@ export default class Terraform {
     }
 
     /**
-     * Check workspace exists, and return Id.
+     * Check workspace exists, and returns Id.
      * 
      * @param {string} workspace - Workspace name.
      * @returns {string} - Workspace Id.
@@ -39,10 +39,10 @@ export default class Terraform {
             const res = await this.axios.get(`/organizations/${this.org}/workspaces/${workspace}`)
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
-            }
-            else if (!res.data.data.id) {
+            } else if (!res.data.data.id) {
                 throw new Error('Workspace not found.')
             }
+
             return res.data.data.id
         } catch (err) {
             throw new Error(`Error checking the workspace: ${err.message}`)
@@ -52,9 +52,10 @@ export default class Terraform {
     /**
      * Create new configuration version, and returns upload URL.
      * 
+     * @param {string} workspaceId - Worspace Id.
      * @returns {string} - Configuration upload URL.
      */
-    async _createConfigVersion(workspaceId){
+    async _createConfigVersion(workspaceId) {
 
         try {
             const configVersion = {
@@ -64,14 +65,14 @@ export default class Terraform {
                     "auto-queue-runs": false
                     }
                 }
-            }
-            const res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
+            },
+            res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
-            }
-            else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
+            } else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
                 throw new Error('No upload URL was returned.')
             }
+
             return res.data.data.attributes['upload-url']
         } catch (err) {
             throw new Error(`Error creating the config version: ${err.message}`)
@@ -82,11 +83,13 @@ export default class Terraform {
      * Uploads assets to new configuration version.
      * 
      * @param {string} uploadUrl - Url for configuration upload.
-     * @param {string} filePath - tar.gz file for upload.
+     * @param {string} filePath - The tar.gz file for upload.
+     * @returns {object} - Axios request response.
      */
     async _uploadConfiguration(uploadUrl, filePath) {
         try {
             const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
+            
             return res
         } catch (err) {
             throw new Error(`Error uploading the configuration: ${err.message}`)
@@ -99,15 +102,15 @@ export default class Terraform {
      * @param {string} workspaceId - Workspace Id.
      * @returns {string} - Run Id.
      */
-    async _run(workspaceId){
+    async _run(workspaceId) {
         
         try {
             const run = {
                 data: {
                   attributes: {
-                    "is-destroy":false
+                    "is-destroy": false
                   },
-                  type:"runs",
+                  type: "runs",
                   relationships: {
                     workspace: {
                       data: {
@@ -121,10 +124,10 @@ export default class Terraform {
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
-            }
-            else if (!res.data.data.id) {
+            } else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
             }
+
                 return res.data.data.id
         } catch (err) {
                 throw new Error(`Error requesting the run: ${err.message}`)
@@ -136,18 +139,18 @@ export default class Terraform {
      * Create, initialize and start a new workspace run.
      * 
      * @param {string} workspace - Workspace name.
-     * @param {*} filePath - Path to tar.gz file with Terraform configuration.
+     * @param {string} filePath - Path to tar.gz file with Terraform configuration.
+     * @returns {string} - runId. The Id of the new run.
      */
-    async run(workspace, filePath){
-        try {
-            const workspaceId = await this._checkWorkspace(workspace)
-            const uploadUrl = await this._createConfigVersion(workspaceId)
-            const resUpload = await this._uploadConfiguration(uploadUrl, filePath)
-            const runId = await this._run(workspaceId)
-            return runId            
-        } catch (err) {
-            throw err
-        }
+    async run(workspace, filePath) {
+
+        const workspaceId = await this._checkWorkspace(workspace),
+              uploadUrl = await this._createConfigVersion(workspaceId)
+        await this._uploadConfiguration(uploadUrl, filePath)
+        const runId = await this._run(workspaceId)
+        
+        return runId            
+
     }
 }
 

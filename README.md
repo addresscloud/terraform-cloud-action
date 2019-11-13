@@ -4,6 +4,8 @@
 
 > An action to run Terraform Cloud workspaces
 
+This action submits a run to a Terraform Cloud workspace which performs a plan and apply. Once the run is succesfully submitted the action returns a success, leaving the plan and apply to continue to run in Terraform Cloud.
+
 ## Table of Contents
 
 - [Usage](#usage)
@@ -13,7 +15,7 @@
 
 ## Usage
 
-This action submits a run to a Terraform Cloud workspace which performs a plan and then apply. Once the run is succesfully submitted the action returns a success, leaving the plan and apply to continue to run in Terraform Cloud. Variables and settings should be configured using the Terraform Cloud UI. Terraform Cloud requires a .tar.gz archive containing the Terraform configuration, and build artifacts if required. The example shows a GitHub workflow archiving Lambda functions (in the `build` directory) alongside a Terraform configuration (in the `infrastructure` directory) for deployment. The archive is then passed to the action for deployment by Terraform Cloud.
+Terraform Cloud requires a .tar.gz archive containing the Terraform configuration, and build artifacts if required. The example shows a GitHub workflow archiving Lambda functions (in the `build` directory) alongside a Terraform configuration (in the `infrastructure` directory) for deployment. The archive is then passed to the action for deployment by Terraform Cloud.
 
 ```yml
 - name: Create tar gz file
@@ -29,6 +31,8 @@ This action submits a run to a Terraform Cloud workspace which performs a plan a
 ```
 
 ### Inputs
+
+The inputs below are required by the action to submit the run to Terraform Cloud. Additional workspace variables and settings should be configured using the Terraform Cloud UI. 
 
 #### tfToken
  
@@ -55,7 +59,7 @@ The identfier of the run in Terraform Cloud.
 ### Notes
 
 If your repository contains multiple modules, upload the top-level directory and configure the root workspace path in the Terraform Cloud UI. For example, to deploy 
-`infrastructure/dev/services/lambda/main.tf` which has references to modules in `infrastructure/modules/services/lambda/module.tf` upload the entire `infrastructure` directory and configure `infrastructure/dev/services/lambda/` as the root of the module.
+`infrastructure/dev/services/lambda/main.tf` which has references to modules in `infrastructure/modules/services/lambda/module.tf` upload the entire `infrastructure` directory and configure `infrastructure/dev/services/lambda/` as the root of the workspace in the Terraform Cloud UI.
 
 ## Maintainers
 

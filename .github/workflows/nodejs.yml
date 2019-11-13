@@ -29,15 +29,7 @@ jobs:
       - name: Test
         run: npm run test
 
-      - name: Create coverage
+      - name: Coverage
         run: npm run coverage
         env:
-          CI: true
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1.0.3
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          file: ./coverage.lcov
-          flags: unittests
-          name: codecov
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

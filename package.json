@@ -1,6 +1,6 @@
 {
   "name": "terraform-cloud-action",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "description": "GitHub action that creates a run in a Terraform Cloud workspace.",
   "main": "index.js",
   "scripts": {

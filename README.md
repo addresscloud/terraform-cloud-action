@@ -30,25 +30,27 @@ Terraform Cloud requires a .tar.gz archive containing the Terraform configuratio
     filePath: './build.tar.gz'
 ```
 
+![Example workflow](example.png)
+
 ### Inputs
 
 The inputs below are required by the action to submit the run to Terraform Cloud. Additional workspace variables and settings should be configured using the Terraform Cloud UI. 
 
-#### tfToken
+#### `tfToken`
  
-**Required** Terraform Cloud access token.
+**Required** - Terraform Cloud access token.
 
-#### tfOrganization
+#### `tfOrganization`
 
-**Required** Terraform Cloud organization.
+**Required** - Terraform Cloud organization.
 
-#### tfWorkspace
+#### `tfWorkspace`
 
-**Required** Name of existing Terraform Cloud workspace.
+**Required** - Name of existing Terraform Cloud workspace.
 
 #### `filePath`
 
-**Required** Path to .tar.gz archive with Terraform configuration.
+**Required** - Path to .tar.gz archive with Terraform configuration.
 
 ### Outputs
 

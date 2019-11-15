@@ -130,10 +130,10 @@ export default class Terraform {
 
                 return res.data.data.id
         } catch (err) {
-                console.log(err.messages)
+                console.error(err.message)
                 let message = `Error requesting the run: ${err.message}`
                 if (err.response) {
-                    console.log(err.response)
+                    console.error(err.response)
                     message += `\nResponse: ${JSON.stringify(err.response)}`
                 }
                 throw new Error(message)
@@ -150,11 +150,8 @@ export default class Terraform {
     async run(workspace, filePath) {
 
         const workspaceId = await this._checkWorkspace(workspace)
-        console.log(`workspaceId: ${workspaceId}`)
         const uploadUrl = await this._createConfigVersion(workspaceId)
-        console.log(`uploadUrl: ${uploadUrl}`)
         await this._uploadConfiguration(uploadUrl, filePath)
-        console.log(`uploadConfiguration complete`)
         const runId = await this._run(workspaceId)
         console.log(`runId: ${runId}`)
         

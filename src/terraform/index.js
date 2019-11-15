@@ -149,10 +149,14 @@ export default class Terraform {
      */
     async run(workspace, filePath) {
 
-        const workspaceId = await this._checkWorkspace(workspace),
-              uploadUrl = await this._createConfigVersion(workspaceId)
+        const workspaceId = await this._checkWorkspace(workspace)
+        console.log(`workspaceId: ${workspaceId}`)
+        const uploadUrl = await this._createConfigVersion(workspaceId)
+        console.log(`uploadUrl: ${uploadUrl}`)
         await this._uploadConfiguration(uploadUrl, filePath)
+        console.log(`uploadConfiguration complete`)
         const runId = await this._run(workspaceId)
+        console.log(`runId: ${runId}`)
         
         return runId            
 

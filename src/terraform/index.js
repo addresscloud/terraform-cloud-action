@@ -132,7 +132,11 @@ export default class Terraform {
         } catch (err) {
                 console.log(err.response)
                 console.log(err.messages)
-                throw new Error(`Error requesting the run: ${err.message}. \n Response: ${JSON.stringify(err.response)}.`)
+                let message = `Error requesting the run: ${err.message}`
+                if (err.response) {
+                    message += `\nResponse: ${JSON.stringify(err.response)}`
+                }
+                throw new Error(message)
         }
     }
 

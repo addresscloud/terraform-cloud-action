@@ -130,10 +130,10 @@ export default class Terraform {
 
                 return res.data.data.id
         } catch (err) {
-                consolelog('run error!')
-                console.log(err)
+                console.log('run error!')
+                console.log(err.message)
+                console.log(err.response)
                 //throw new Error(`Error requesting the run: ${err.message}`)
-
         }
     }
 

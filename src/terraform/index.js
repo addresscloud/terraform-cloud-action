@@ -121,6 +121,7 @@ export default class Terraform {
                   }
                 }
               }
+            console.log(`Run parameters: ${JSON.stringify(run)}`)
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')

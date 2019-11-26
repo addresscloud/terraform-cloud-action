@@ -133,10 +133,10 @@ export default class Terraform {
                 console.error(err.message)
                 let message = `Error requesting the run: ${err.message}`
                 if (err.response) {
-                    console.error(err.response)
-                    message += `\nResponse: ${err.response.data.errors}`
+                    console.error(err.response.data.errors)
+                    //message += `\nResponse: ${err.response.data.errors}`
                 }
-                throw new Error(message)
+                throw new Error(`Error requesting the run`)
         }
     }
 

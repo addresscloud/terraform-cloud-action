@@ -108,7 +108,8 @@ export default class Terraform {
             const run = {
                 data: {
                   attributes: {
-                    "is-destroy": false
+                    "is-destroy": false,
+                    "message": `terraform-cloud-action - ${new Date()}`,
                   },
                   type: "runs",
                   relationships: {
@@ -134,7 +135,7 @@ export default class Terraform {
                 console.error(err.message)
                 let message = `Error requesting the run: ${err.message}`
                 if (err.response) {
-                    console.error(err.response)
+                    //console.error(err.response)
                     message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
                 }
                 throw new Error(message)

@@ -109,7 +109,7 @@ export default class Terraform {
                 data: {
                   attributes: {
                     "is-destroy": false,
-                    "message": `terraform-cloud-action - ${new Date()}`,
+                    "message": `Queued by TFC GH Action ()`,
                   },
                   type: "runs",
                   relationships: {
@@ -122,7 +122,6 @@ export default class Terraform {
                   }
                 }
               }
-            console.log(`Run parameters: ${JSON.stringify(run)}`)
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
@@ -132,12 +131,7 @@ export default class Terraform {
 
                 return res.data.data.id
         } catch (err) {
-                console.error(err.message)
-                let message = `Error requesting the run: ${err.message}`
-                if (err.response) {
-                    //console.error(err.response)
-                    message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
-                }
+                let message = `Error requesting the run: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
                 throw new Error(message)
         }
     }

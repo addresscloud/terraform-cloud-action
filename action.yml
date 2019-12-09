@@ -1,5 +1,5 @@
 # action.yml
-name: 'Terraform Cloud'
+name: 'Terraform Cloud Action'
 description: 'Submit a run to Terraform Cloud.'
 inputs:
   tfToken:

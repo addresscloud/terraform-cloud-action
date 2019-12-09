@@ -28,6 +28,7 @@ Terraform Cloud requires a .tar.gz archive containing the Terraform configuratio
     tfOrg: '<ORGANISATION>'
     tfWorkspace: 'my-lambda-service'
     filePath: './build.tar.gz'
+    identifier: ${{ github.sha }}
 ```
 
 ![Example workflow](example.png)
@@ -51,6 +52,10 @@ The inputs below are required by the action to submit the run to Terraform Cloud
 #### `filePath`
 
 **Required** - Path to .tar.gz archive with Terraform configuration.
+
+#### `identifier`
+
+**Required** - Unique identifier for the run (e.g. git commit sha). Reduced to 7 characters for brevity.
 
 ### Outputs
 

@@ -12,6 +12,8 @@ inputs:
     description: Terraform Cloud Workspace.'
   filePath:
     description: 'Archive (.tar.gz) to submit.'
+  identifier:
+    description: 'Unique identifier for workflow (e.g. Git SHA)'
   
 outputs:
   runId: # id of output

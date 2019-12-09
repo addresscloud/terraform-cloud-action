@@ -103,9 +103,7 @@ export default class Terraform {
      * @param {string} identifier - Unique identifier for the run (e.g. git commit).
      * @returns {string} - Run Id.
      */
-    async _run(workspaceId, identifier) {
-        console.log(identifier)
-        
+    async _run(workspaceId, identifier) {        
         try {
             const run = {
                 data: {
@@ -124,7 +122,6 @@ export default class Terraform {
                   }
                 }
               }
-            console.log(run)
             const res = await this.axios.post('/runs', JSON.stringify(run))
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')

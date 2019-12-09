@@ -3,6 +3,7 @@ import Terraform from './terraform'
 
 export default async function main() {
     try {
+        console.log(process.env.GITHUB_CONTEXT)
 
         const token = core.getInput('tfToken'),
               org = core.getInput('tfOrg'),

@@ -4,10 +4,6 @@ import Terraform from '../index'
 
 describe('Terraform _run test suite', () => {
 
-    afterEach(() => {
-        sinon.restore()
-    })
-
     it('can import Terraform', () => {
         const terraform = new Terraform('token', 'org')
         expect(terraform instanceof Terraform).to.equal(true)
@@ -15,7 +11,7 @@ describe('Terraform _run test suite', () => {
 
     it('can succesfully initiate a run', async() => {
         const terraform = new Terraform('token', 'org')
-        sinon.stub(terraform.axios, 'post').returns({
+        const stub = sinon.stub(terraform.axios, 'post').returns({
             data: {
                 data: {
                     id: '1'
@@ -23,19 +19,21 @@ describe('Terraform _run test suite', () => {
             }
 
         })
-        const res = await terraform._run('1')
+        const res = await terraform._run('1', 'id')
+        stub.restore()
         expect(res).to.equal('1')
     })
 
     it('catches no data returned', async() => {
         const terraform = new Terraform('token', 'org')
-        sinon.stub(terraform.axios, 'post').returns({})
-        let message = "__PRETEST__"
+        const stub = sinon.stub(terraform.axios, 'post').returns({})
+        let message = "__PRETEST__"        
         try {
-            await terraform._run('1')
+            await terraform._run('1', 'id')
         } catch (err) {
             message = err.message
         }
+        stub.restore()
         expect(message).to.equal('Error requesting the run: No data returned from request.')
     })
 
@@ -44,7 +42,7 @@ describe('Terraform _run test suite', () => {
         sinon.stub(terraform.axios, 'post').returns({data: {data:{}}})
         let message = "__PRETEST__"
         try {
-            await terraform._run('1')
+            await terraform._run('1', 'id')
         } catch (err) {
             message = err.message
         }
@@ -56,7 +54,7 @@ describe('Terraform _run test suite', () => {
         sinon.stub(terraform.axios, 'post').throws(new Error(`Axios error.`))
         let message = "__PRETEST__"
         try {
-            await terraform._run('1')
+            await terraform._run('1', 'id')
         } catch (err) {
             message = err.message
         }

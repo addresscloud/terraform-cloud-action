@@ -12,7 +12,7 @@ export default async function main() {
         console.log(`identifier: ${identifier}`)
 
         const tf = new Terraform(token, org)
-        const id = await tf.run(workspace, filePath, identifier)
+        const id = await tf.run(workspace, filePath, identifier.slice(0, 7))
         console.log(`Workspace run submitted succesfully: https://app.terraform.io/app/${org}/workspaces/${workspace}/runs/${id}`)
         core.setOutput("runId", id);
     } catch (error) {

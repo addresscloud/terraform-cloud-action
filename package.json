@@ -30,7 +30,7 @@
     "axios": "^0.19.0"
   },
   "devDependencies": {
-    "@addresscloud/eslint-config": "0.0.2",
+    "@addresscloud/eslint-config": "0.0.3",
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.6.4",
     "@babel/plugin-transform-runtime": "^7.6.2",

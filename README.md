@@ -22,7 +22,7 @@ Terraform Cloud requires a .tar.gz archive containing the Terraform configuratio
   run: tar --exclude *.terraform* -zcvf build.tar.gz build infrastructure
 
 - name: Terraform Cloud
-  uses: addresscloud/terraform-cloud-action@master
+  uses: addresscloud/terraform-cloud-action@v1.0.0
   with:
     tfToken: ${{ secrets.TERRAFORM_TOKEN }}
     tfOrg: '<ORGANISATION>'

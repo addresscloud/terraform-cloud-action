@@ -100,15 +100,16 @@ export default class Terraform {
      * Requests run of new configuration.
      * 
      * @param {string} workspaceId - Workspace Id.
+     * @param {string} identifier - Unique identifier for the run (e.g. git commit).
      * @returns {string} - Run Id.
      */
-    async _run(workspaceId) {
-        
+    async _run(workspaceId, identifier) {        
         try {
             const run = {
                 data: {
                   attributes: {
-                    "is-destroy": false
+                    "is-destroy": false,
+                    "message": `Queued by TFC GH Action (${identifier})`,
                   },
                   type: "runs",
                   relationships: {
@@ -127,11 +128,15 @@ export default class Terraform {
             } else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
             }
-
-                return res.data.data.id
+            
+            return res.data.data.id
+            
         } catch (err) {
-                throw new Error(`Error requesting the run: ${err.message}`)
-
+                let message = `Error requesting the run: ${err.message}`
+                if (err.response) {
+                    message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
+                }
+                throw new Error(message)
         }
     }
 
@@ -140,14 +145,15 @@ export default class Terraform {
      * 
      * @param {string} workspace - Workspace name.
      * @param {string} filePath - Path to tar.gz file with Terraform configuration.
+     * @param {string} identifier - Unique identifier for the run (e.g. git commit)
      * @returns {string} - runId. The Id of the new run.
      */
-    async run(workspace, filePath) {
+    async run(workspace, filePath, identifier) {
 
-        const workspaceId = await this._checkWorkspace(workspace),
-              uploadUrl = await this._createConfigVersion(workspaceId)
+        const workspaceId = await this._checkWorkspace(workspace)
+        const uploadUrl = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(uploadUrl, filePath)
-        const runId = await this._run(workspaceId)
+        const runId = await this._run(workspaceId, identifier)
         
         return runId            
 

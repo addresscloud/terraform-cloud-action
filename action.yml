@@ -1,5 +1,5 @@
 # action.yml
-name: 'Terraform Cloud'
+name: 'Terraform Cloud Action'
 description: 'Submit a run to Terraform Cloud.'
 inputs:
   tfToken:
@@ -12,6 +12,8 @@ inputs:
     description: Terraform Cloud Workspace.'
   filePath:
     description: 'Archive (.tar.gz) to submit.'
+  identifier:
+    description: 'Unique identifier for workflow (e.g. Git SHA)'
   
 outputs:
   runId: # id of output
@@ -20,3 +22,7 @@ outputs:
 runs:
   using: 'node12'
   main: 'dist/index.js'
+
+branding:
+  icon: 'server'
+  color: 'purple'

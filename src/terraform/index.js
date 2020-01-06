@@ -72,7 +72,7 @@ export default class Terraform {
             } else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
                 throw new Error('No upload URL was returned.')
             }
-            console.log(res.data.data.attributes)
+            console.log(res.data.data)
             return res.data.data.attributes['upload-url']
         } catch (err) {
             throw new Error(`Error creating the config version: ${err.message}`)

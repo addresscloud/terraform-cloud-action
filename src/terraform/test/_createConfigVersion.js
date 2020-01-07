@@ -15,13 +15,42 @@ describe('Terraform _createConfigVersion test suite', () => {
                 data: {
                         data: {
                             attributes: {
-                                'upload-url': 'mock-url'
+                                'upload-url': 'mock-url',
+                                'status': 'uploaded'
                         }
                     }
                 }
         })
         const res = await terraform._createConfigVersion('1')
         stub.restore()
+        expect(res).to.equal('mock-url')
+    })
+
+    it('can succesfully wait for workspace upload', async() => {
+        const terraform = new Terraform('token', 'org')
+        const stub1 = sinon.stub(terraform.axios, 'post').returns({
+                data: {
+                        data: {
+                            attributes: {
+                                'upload-url': 'mock-url',
+                                'status': 'pending'
+                        }
+                    }
+                }
+        })
+        const stub2 = sinon.stub(terraform.axios, 'get').returns({
+            data: {
+                    data: {
+                        attributes: {
+                            'upload-url': 'mock-url',
+                            'status': 'uploaded'
+                    }
+                }
+            }
+        })
+        const res = await terraform._createConfigVersion('1')
+        stub1.restore()
+        stub2.restore()
         expect(res).to.equal('mock-url')
     })
 

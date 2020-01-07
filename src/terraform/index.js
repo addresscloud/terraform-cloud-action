@@ -58,7 +58,7 @@ export default class Terraform {
     async _createConfigVersion(workspaceId) {
 
         try {
-            const configVersion = {
+            const body = {
                 data: {
                   type: "configuration-versions",
                   attributes: {
@@ -66,14 +66,32 @@ export default class Terraform {
                     }
                 }
             },
-            res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
+            res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(body))
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
             } else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
                 throw new Error('No upload URL was returned.')
             }
-            console.log(res.data.data)
-            return res.data.data.attributes['upload-url']
+            const configVersion = res.data.data
+            let { status } = configVersion.attributes
+            let WAIT = 100
+            let COUNTER = 0
+            const LIMIT = 3
+            while (status === 'pending') {
+                if (COUNTER < LIMIT) {
+                    await new Promise((resolve) => setTimeout(resolve, WAIT));
+                }
+                WAIT *= 2
+                COUNTER += 1
+                const retry = this.axios.get(`/configuration-versions/${configVersion.id}`)
+                status = retry.data.data.attributes.status
+            }
+            if (status === 'uploaded') {
+                return configVersion.attributes['upload-url']
+            } else {
+                throw new Error(`Invalid config version status: ${status}`)
+            }
+
         } catch (err) {
             throw new Error(`Error creating the config version: ${err.message}`)
         }

@@ -6,6 +6,7 @@ module.exports = {
         "multiline-ternary": 0,
         "no-ternary": 0,
         "arrow-body-style": 0,
-        "prefer-destructuring": 0
+        "prefer-destructuring": 0,
+        "require-await": 0
     }
 };

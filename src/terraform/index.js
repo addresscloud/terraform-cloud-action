@@ -12,9 +12,9 @@ export default class Terraform {
      * @param {string} token - Terraform Cloud token.
      * @param {string} org - Terraform Cloud organization.
      * @param {string} [address=`app.terraform.com`] - Terraform Cloud address.
-     * @param {number} [sleepDuration=5] - Duration to wait before requesting status.
+     * @param {number} [retryDuration=1000] - Duration (ms) to wait before retrying configuration version request.
      */
-    constructor(token, org, address = `app.terraform.io`, sleepDuration = 5) {
+    constructor(token, org, address = `app.terraform.io`, retryDuration = 1000) {
         this.axios = axios.create({
             baseURL: `https://${address}/api/v2`,
             headers: {
@@ -22,8 +22,10 @@ export default class Terraform {
                 'Content-Type': `application/vnd.api+json`              
             }
         })
-        this.sleepDuration = sleepDuration
+        this.retryDuration = retryDuration
         this.org = org
+        this.retryLimit = 3
+
     }
 
     /**
@@ -46,6 +48,30 @@ export default class Terraform {
             return res.data.data.id
         } catch (err) {
             throw new Error(`Error checking the workspace: ${err.message}`)
+        }
+    }
+
+    /**
+     * Wait for specified time.
+     * 
+     * @param {number} ms - Duration. 
+     */
+    async _sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    /**
+     * Get configuration version upload status.
+     * 
+     * @param {string} configVersionId - the ID of the configuration version.
+     */
+    async _getConfigVersionStatus(configVersionId) {
+        try {
+            const res = await this.axios.get(`/configuration-versions/${configVersionId}`)
+            
+            return res.data.data.attributes.status
+        } catch (err) {
+            throw new Error(`Error getting configuration version: ${err.message}`)
         }
     }
 
@@ -74,17 +100,15 @@ export default class Terraform {
             }
             const configVersion = res.data.data
             let { status } = configVersion.attributes
-            let WAIT = 100
-            let COUNTER = 0
-            const LIMIT = 3
+            let retryDuration = this.retryDuration
+            let counter = 0
             while (status === 'pending') {
-                if (COUNTER < LIMIT) {
-                    await new Promise((resolve) => setTimeout(resolve, WAIT));
+                if (counter < this.retryLimit) {
+                    await this._sleep(retryDuration)
+                    status = await this._getConfigVersionStatus(configVersion.id)
                 }
-                WAIT *= 2
-                COUNTER += 1
-                const retry = this.axios.get(`/configuration-versions/${configVersion.id}`)
-                status = retry.data.data.attributes.status
+                retryDuration *= 2
+                counter += 1
             }
             if (status === 'uploaded') {
                 return configVersion.attributes['upload-url']

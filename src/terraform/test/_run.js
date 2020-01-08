@@ -60,4 +60,22 @@ describe('Terraform _run test suite', () => {
         }
         expect(message).to.equal('Error requesting the run: Axios error.')
     })
+
+    it('catches error with response', async() => {
+        const terraform = new Terraform('token', 'org')
+        const error = new Error(`Response error`)
+        error.response = {
+            data: {
+                errors: 500
+            }
+        }
+        sinon.stub(terraform.axios, 'post').throws(error)
+        let message = "__PRETEST__"
+        try {
+            await terraform._run('1', 'id')
+        } catch (err) {
+            message = err.message
+        }
+        expect(message).to.equal('Error requesting the run: Response error\nResponse: 500')
+    })
 })

@@ -24,7 +24,7 @@ export default class Terraform {
         })
         this.retryDuration = retryDuration
         this.org = org
-        this.retryLimit = 2
+        this.retryLimit = 10
     }
 
     /**
@@ -67,7 +67,8 @@ export default class Terraform {
     async _getConfigVersionStatus(configVersionId) {
         try {
             const res = await this.axios.get(`/configuration-versions/${configVersionId}`)
-            
+            console.log(`Updated configVersion: ${res.data.data}`)
+
             return res.data.data.attributes.status
         } catch (err) {
             throw new Error(`Error getting configuration version: ${err.message}`)
@@ -98,6 +99,7 @@ export default class Terraform {
                 throw new Error('No upload URL was returned.')
             }
             const configVersion = res.data.data
+            console.log(`Initial configVersion: ${configVersion}`)
             let { status } = configVersion.attributes
             let counter = 0
             let retryDuration = this.retryDuration

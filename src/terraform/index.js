@@ -25,7 +25,6 @@ export default class Terraform {
         this.retryDuration = retryDuration
         this.org = org
         this.retryLimit = 2
-
     }
 
     /**
@@ -101,17 +100,19 @@ export default class Terraform {
             const configVersion = res.data.data
             let { status } = configVersion.attributes
             let counter = 0
+            let retryDuration = this.retryDuration
             // needs logging.
             console.log(`Initial status: ${status}`)
             while (status === 'pending') {
                 if (counter < this.retryLimit) {
                     console.log(`counter and retryLimit: ${counter}, ${this.retryLimit}`)
                     console.log(`will now sleep`)
-                    await this._sleep(this.retryDuration)
+                    await this._sleep(retryDuration)
                     console.log(`awake`)
                     status = await this._getConfigVersionStatus(configVersion.id)
                     console.log(`update status: ${status}`)
                     counter += 1
+                    retryDuration *= 2
                 } else {
                     throw new Error(`Config version status was still pending after ${this.retryLimit} attempts.`)
                 }

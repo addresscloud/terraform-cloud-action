@@ -93,12 +93,13 @@ export default class Terraform {
                 }
             },
             res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(body))
+            // TODO use a spread operator here
             if (!res.data || !res.data.data) {
                 throw new Error('No data returned from request.')
             } else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
                 throw new Error('No upload URL was returned.')
             }
-            return configVersion.attributes['upload-url']
+            return res.data.data.attributes['upload-url']
 
         } catch (err) {
             throw new Error(`Error creating the config version: ${err.message}`)
@@ -208,7 +209,8 @@ export default class Terraform {
         await this._uploadConfiguration(uploadUrl, filePath)
         //const runId = await this._run(workspaceId, identifier)
         
-        return runId            
+        //return runId
+        return 1       
 
     }
 }

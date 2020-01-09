@@ -69,7 +69,7 @@ export default class Terraform {
             const res = await this.axios.get(`/configuration-versions/${configVersionId}`)
             console.log(`Updated configVersion: ${JSON.stringify(res.data.data)}`)
 
-            return res.data.data.status
+            return res.data.data.attributes.status
         } catch (err) {
             throw new Error(`Error getting configuration version: ${err.message}`)
         }
@@ -121,7 +121,7 @@ export default class Terraform {
             while (status === 'pending') {
                 if (counter < this.retryLimit) {
                     await this._sleep(this.retryDuration)
-                    status = this._getConfigVersionStatus(configId)
+                    status = await this._getConfigVersionStatus(configId)
                     counter += 1
                 } else {
                     throw new Error(`Config version status was still pending after ${this.retryLimit} attempts.`)

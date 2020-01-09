@@ -194,11 +194,9 @@ export default class Terraform {
         const workspaceId = await this._checkWorkspace(workspace)
         const {id, uploadUrl} = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(id, uploadUrl, filePath)
-        //const runId = await this._run(workspaceId, identifier)
+        const runId = await this._run(workspaceId, identifier)
         
-        //return runId
-        return 1       
-
+        return runId
     }
 }
 

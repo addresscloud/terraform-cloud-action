@@ -106,9 +106,9 @@ export default class Terraform {
             while (status === 'pending') {
                 if (counter < this.retryLimit) {
                     console.log(`counter and retryLimit: ${counter}, ${this.retryLimit}`)
-                    console.log(`will now sleep`)
-                    await this._sleep(this.retryDuration)
-                    console.log(`awake`)
+                    //console.log(`will now sleep`)
+                    //await this._sleep(this.retryDuration)
+                    //console.log(`awake`)
                     status = await this._getConfigVersionStatus(configVersion.id)
                     console.log(`update status: ${status}`)
                     counter += 1

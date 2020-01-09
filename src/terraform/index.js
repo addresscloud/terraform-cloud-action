@@ -69,7 +69,7 @@ export default class Terraform {
             const res = await this.axios.get(`/configuration-versions/${configVersionId}`)
             console.log(`Updated configVersion: ${JSON.stringify(res.data.data)}`)
 
-            return res.data.data.attributes.status
+            return res.data.data.status
         } catch (err) {
             throw new Error(`Error getting configuration version: ${err.message}`)
         }

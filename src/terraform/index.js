@@ -24,7 +24,7 @@ export default class Terraform {
         })
         this.retryDuration = retryDuration
         this.org = org
-        this.retryLimit = 10
+        this.retryLimit = 3
     }
 
     /**
@@ -119,7 +119,7 @@ export default class Terraform {
                 counter = 0
 
             while (status === 'pending') {
-                if (counter > this.retryLimit) {
+                if (counter < this.retryLimit) {
                     await this._sleep(this.retryDuration)
                     status = this._getConfigVersionStatus(configId)
                     counter += 1
@@ -132,33 +132,6 @@ export default class Terraform {
                 throw new Error(`Invalid config version status: ${status}`)
             }
 
-            /*
-            const configVersion = res.data.data
-            console.log(`Initial configVersion: ${JSON.stringify(configVersion)}`)
-            let { status } = configVersion.attributes
-            let counter = 0
-            let retryDuration = this.retryDuration
-            // needs logging.
-            console.log(`Initial status: ${status}`)
-            while (status === 'pending') {
-                if (counter < this.retryLimit) {
-                    console.log(`counter and retryLimit: ${counter}, ${this.retryLimit}`)
-                    console.log(`will now sleep`)
-                    await this._sleep(retryDuration)
-                    console.log(`awake`)
-                    status = await this._getConfigVersionStatus(configVersion.id)
-                    console.log(`update status: ${status}`)
-                    counter += 1
-                    retryDuration *= 2
-                } else {
-                    throw new Error(`Config version status was still pending after ${this.retryLimit} attempts.`)
-                }
-            }
-            if (status === 'uploaded') {
-                return res
-            } else {
-                throw new Error(`Invalid config version status: ${status}`)
-            }*/
         } catch (err) {
             throw new Error(`Error uploading the configuration: ${err.message}`)
         }

@@ -129,7 +129,7 @@ export default class Terraform {
             }
 
             if (status !== 'uploaded') {
-                throw new Error(`Invalid config version status: ${status}`)
+                throw new Error(`Invalid config version status: ${JSON.stringify(status)}`)
             }
 
         } catch (err) {

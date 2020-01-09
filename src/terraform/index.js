@@ -82,7 +82,7 @@ export default class Terraform {
      * @returns {string} - Configuration upload URL.
      */
     async _createConfigVersion(workspaceId) {
-
+        // TODO - check changed files.
         try {
             const body = {
                 data: {
@@ -98,6 +98,26 @@ export default class Terraform {
             } else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
                 throw new Error('No upload URL was returned.')
             }
+            return configVersion.attributes['upload-url']
+
+        } catch (err) {
+            throw new Error(`Error creating the config version: ${err.message}`)
+        }
+    }
+
+    /**
+     * Uploads assets to new configuration version.
+     * 
+     * @param {string} uploadUrl - Url for configuration upload.
+     * @param {string} filePath - The tar.gz file for upload.
+     * @returns {object} - Axios request response.
+     */
+    async _uploadConfiguration(uploadUrl, filePath) {
+        try {
+            const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
+            console.log(`uploadConfig res: ${JSON.stringify(res)}`)
+            return res
+            /*
             const configVersion = res.data.data
             console.log(`Initial configVersion: ${JSON.stringify(configVersion)}`)
             let { status } = configVersion.attributes
@@ -120,28 +140,10 @@ export default class Terraform {
                 }
             }
             if (status === 'uploaded') {
-                return configVersion.attributes['upload-url']
+                return res
             } else {
                 throw new Error(`Invalid config version status: ${status}`)
-            }
-
-        } catch (err) {
-            throw new Error(`Error creating the config version: ${err.message}`)
-        }
-    }
-
-    /**
-     * Uploads assets to new configuration version.
-     * 
-     * @param {string} uploadUrl - Url for configuration upload.
-     * @param {string} filePath - The tar.gz file for upload.
-     * @returns {object} - Axios request response.
-     */
-    async _uploadConfiguration(uploadUrl, filePath) {
-        try {
-            const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
-            
-            return res
+            }*/
         } catch (err) {
             throw new Error(`Error uploading the configuration: ${err.message}`)
         }
@@ -204,7 +206,7 @@ export default class Terraform {
         const workspaceId = await this._checkWorkspace(workspace)
         const uploadUrl = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(uploadUrl, filePath)
-        const runId = await this._run(workspaceId, identifier)
+        //const runId = await this._run(workspaceId, identifier)
         
         return runId            
 

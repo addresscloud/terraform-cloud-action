@@ -14,6 +14,7 @@ describe('Terraform _createConfigVersion test suite', () => {
         const stub = sinon.stub(terraform.axios, 'post').returns({
                 data: {
                         data: {
+                            id: '42',
                             attributes: {
                                 'upload-url': 'mock-url',
                                 'status': 'uploaded'
@@ -23,35 +24,7 @@ describe('Terraform _createConfigVersion test suite', () => {
         })
         const res = await terraform._createConfigVersion('1')
         stub.restore()
-        expect(res).to.equal('mock-url')
-    })
-
-    it('can succesfully wait for workspace upload', async() => {
-        const terraform = new Terraform('token', 'org')
-        const stub1 = sinon.stub(terraform.axios, 'post').returns({
-                data: {
-                        data: {
-                            attributes: {
-                                'upload-url': 'mock-url',
-                                'status': 'pending'
-                        }
-                    }
-                }
-        })
-        const stub2 = sinon.stub(terraform.axios, 'get').returns({
-            data: {
-                    data: {
-                        attributes: {
-                            'upload-url': 'mock-url',
-                            'status': 'uploaded'
-                    }
-                }
-            }
-        })
-        const res = await terraform._createConfigVersion('1')
-        stub1.restore()
-        stub2.restore()
-        expect(res).to.equal('mock-url')
+        expect(res).to.deep.equal({id: '42', uploadUrl: 'mock-url'})
     })
 
     it('catches no data returned', async() => {
@@ -64,20 +37,7 @@ describe('Terraform _createConfigVersion test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error creating the config version: No data returned from request.')
-    })
-
-    it('catches no upload-url returned', async() => {
-        const terraform = new Terraform('token', 'org')
-        const stub = sinon.stub(terraform.axios, 'post').returns({data: {data: {}}})
-        let message = "__PRETEST__"
-        try {
-            await terraform._createConfigVersion('1')
-        } catch (err) {
-            message = err.message
-        }
-        stub.restore()
-        expect(message).to.equal('Error creating the config version: No upload URL was returned.')
+        expect(message).to.equal('Error creating the config version: No configuration returned from request.')
     })
 
     it('catches axios error', async() => {

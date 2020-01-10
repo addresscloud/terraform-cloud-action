@@ -28,11 +28,15 @@ export default class Terraform {
     }
 
     /**
-     * Check workspace exists, and returns Id.
+     * Wait for specified time.
      * 
-     * @param {string} workspace - Workspace name.
-     * @returns {string} - Workspace Id.
+     * @param {number} ms - Duration. 
      */
+    async _sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    // new func
     async _checkWorkspace(workspace) {
 
         try {
@@ -51,15 +55,6 @@ export default class Terraform {
     }
 
     /**
-     * Wait for specified time.
-     * 
-     * @param {number} ms - Duration. 
-     */
-    async _sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms))
-    }
-
-    /**
      * Get configuration version upload status.
      * 
      * @param {string} configVersionId - the ID of the configuration version.
@@ -67,7 +62,6 @@ export default class Terraform {
     async _getConfigVersionStatus(configVersionId) {
         try {
             const res = await this.axios.get(`/configuration-versions/${configVersionId}`)
-            console.log(`Updated configVersion: ${JSON.stringify(res.data.data)}`)
 
             return res.data.data.attributes.status
         } catch (err) {

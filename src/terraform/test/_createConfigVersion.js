@@ -22,7 +22,7 @@ describe('Terraform _createConfigVersion test suite', () => {
                     }
                 }
         })
-        const res = await terraform._createConfigVersion('1')
+        const res = await terraform._createConfigVersion('42')
         stub.restore()
         expect(res).to.deep.equal({id: '42', uploadUrl: 'mock-url'})
     })
@@ -53,4 +53,20 @@ describe('Terraform _createConfigVersion test suite', () => {
         stub.restore()
     })
 
+    it('can get config version status', async() => {
+        const terraform = new Terraform('token', 'org')
+        const stub = sinon.stub(terraform.axios, 'get').returns({
+            data: {
+                data: {
+                    id: 1,
+                    attributes:
+                        {
+                            status: 'uploaded'
+                        }
+                }
+            }
+        })
+        const status = await terraform._getConfigVersionStatus(1)
+        expect(status).to.equal('uploaded')
+    })
 })

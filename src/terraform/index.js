@@ -12,9 +12,9 @@ export default class Terraform {
      * @param {string} token - Terraform Cloud token.
      * @param {string} org - Terraform Cloud organization.
      * @param {string} [address=`app.terraform.com`] - Terraform Cloud address.
-     * @param {number} [sleepDuration=5] - Duration to wait before requesting status.
+     * @param {number} [retryDuration=1000] - Duration (ms) to wait before retrying configuration version request.
      */
-    constructor(token, org, address = `app.terraform.io`, sleepDuration = 5) {
+    constructor(token, org, address = `app.terraform.io`, retryDuration = 1000) {
         this.axios = axios.create({
             baseURL: `https://${address}/api/v2`,
             headers: {
@@ -22,8 +22,9 @@ export default class Terraform {
                 'Content-Type': `application/vnd.api+json`              
             }
         })
-        this.sleepDuration = sleepDuration
+        this.retryDuration = retryDuration
         this.org = org
+        this.retryLimit = 3
     }
 
     /**
@@ -50,15 +51,39 @@ export default class Terraform {
     }
 
     /**
+     * Wait for specified time.
+     * 
+     * @param {number} ms - Duration. 
+     */
+    async _sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    /**
+     * Get configuration version upload status.
+     * 
+     * @param {string} configVersionId - the ID of the configuration version.
+     */
+    async _getConfigVersionStatus(configVersionId) {
+        try {
+            const res = await this.axios.get(`/configuration-versions/${configVersionId}`)
+            console.log(`Updated configVersion: ${JSON.stringify(res.data.data)}`)
+
+            return res.data.data.attributes.status
+        } catch (err) {
+            throw new Error(`Error getting configuration version: ${err.message}`)
+        }
+    }
+
+    /**
      * Create new configuration version, and returns upload URL.
      * 
      * @param {string} workspaceId - Worspace Id.
-     * @returns {string} - Configuration upload URL.
+     * @returns {object} - Configuration object with id and uploadUrl attributes.
      */
     async _createConfigVersion(workspaceId) {
-
         try {
-            const configVersion = {
+            const body = {
                 data: {
                   type: "configuration-versions",
                   attributes: {
@@ -66,14 +91,14 @@ export default class Terraform {
                     }
                 }
             },
-            res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(configVersion))
-            if (!res.data || !res.data.data) {
-                throw new Error('No data returned from request.')
-            } else if (!res.data.data.attributes || !res.data.data.attributes['upload-url']) {
-                throw new Error('No upload URL was returned.')
+            res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(body))
+            const configVersion = res.data.data
+            if (typeof configVersion === "undefined") {
+                throw new Error('No configuration version returned from request.')
             }
 
-            return res.data.data.attributes['upload-url']
+            return { id: configVersion.id, uploadUrl: configVersion.attributes['upload-url']}
+
         } catch (err) {
             throw new Error(`Error creating the config version: ${err.message}`)
         }
@@ -82,15 +107,31 @@ export default class Terraform {
     /**
      * Uploads assets to new configuration version.
      * 
+     * @param {string} configId - The configuration Id.
      * @param {string} uploadUrl - Url for configuration upload.
      * @param {string} filePath - The tar.gz file for upload.
-     * @returns {object} - Axios request response.
      */
-    async _uploadConfiguration(uploadUrl, filePath) {
+    async _uploadConfiguration(configId, uploadUrl, filePath) {
         try {
-            const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
-            
-            return res
+            await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
+
+            let status = await this._getConfigVersionStatus(configId),
+                counter = 0
+
+            while (status === 'pending') {
+                if (counter < this.retryLimit) {
+                    await this._sleep(this.retryDuration)
+                    status = await this._getConfigVersionStatus(configId)
+                    counter += 1
+                } else {
+                    throw new Error(`Config version status was still pending after ${this.retryLimit} attempts.`)
+                }
+            }
+
+            if (status !== 'uploaded') {
+                throw new Error(`Invalid config version status: ${JSON.stringify(status)}`)
+            }
+
         } catch (err) {
             throw new Error(`Error uploading the configuration: ${err.message}`)
         }
@@ -151,12 +192,11 @@ export default class Terraform {
     async run(workspace, filePath, identifier) {
 
         const workspaceId = await this._checkWorkspace(workspace)
-        const uploadUrl = await this._createConfigVersion(workspaceId)
-        await this._uploadConfiguration(uploadUrl, filePath)
+        const {id, uploadUrl} = await this._createConfigVersion(workspaceId)
+        await this._uploadConfiguration(id, uploadUrl, filePath)
         const runId = await this._run(workspaceId, identifier)
         
-        return runId            
-
+        return runId
     }
 }
 

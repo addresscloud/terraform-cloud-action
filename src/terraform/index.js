@@ -92,8 +92,8 @@ export default class Terraform {
                 }
             },
             res = await this.axios.post(`/workspaces/${workspaceId}/configuration-versions`, JSON.stringify(body))
-            const configVersion = ( res.data ? res.data.data : undefined )
-            if (typeof configVersion === "undefined") {
+            const configVersion = res.data ? res.data.data : null
+            if (configVersion === null) {
                 throw new Error('No configuration returned from request.')
             }
 

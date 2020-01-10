@@ -30,13 +30,19 @@ export default class Terraform {
     /**
      * Wait for specified time.
      * 
-     * @param {number} ms - Duration. 
+     * @param {number} ms - Duration.
+     * @returns {promise} - Promise.
      */
     async _sleep(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
 
-    // new func
+    /**
+     * Check workspace exists, and returns Id.
+     * 
+     * @param {string} workspace - Workspace name.
+     * @returns {string} - Workspace Id.
+     */
     async _checkWorkspace(workspace) {
 
         try {
@@ -57,7 +63,8 @@ export default class Terraform {
     /**
      * Get configuration version upload status.
      * 
-     * @param {string} configVersionId - the ID of the configuration version.
+     * @param {string} configVersionId - The ID of the configuration version.
+     * @returns {string} - Upload status.
      */
     async _getConfigVersionStatus(configVersionId) {
         try {
@@ -180,8 +187,8 @@ export default class Terraform {
      * 
      * @param {string} workspace - Workspace name.
      * @param {string} filePath - Path to tar.gz file with Terraform configuration.
-     * @param {string} identifier - Unique identifier for the run (e.g. git commit)
-     * @returns {string} - runId. The Id of the new run.
+     * @param {string} identifier - Unique identifier for the run (e.g. git commit).
+     * @returns {string} - The Id of the new run.
      */
     async run(workspace, filePath, identifier) {
 

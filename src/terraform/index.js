@@ -115,10 +115,7 @@ export default class Terraform {
      */
     async _uploadConfiguration(configId, uploadUrl, filePath) {
         try {
-            console.log(filePath)
-            console.log(fs.statSync(filePath).size)
-            const res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
-            console.log(res)
+            await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
             let status = await this._getConfigVersionStatus(configId),
                 counter = 0
 

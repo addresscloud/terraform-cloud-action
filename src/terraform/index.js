@@ -20,7 +20,8 @@ export default class Terraform {
             headers: {
                 'Authorization': `bearer ${token}`,
                 'Content-Type': `application/vnd.api+json`              
-            }
+            },
+            maxContentLength: Infinity
         })
         this.retryDuration = retryDuration
         this.org = org

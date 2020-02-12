@@ -1,4 +1,4 @@
-name: Run tests
+name: Test
 on: 
   push:
 
@@ -33,3 +33,20 @@ jobs:
         run: npm run coverage
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+
+      - name: Slack success
+        if: success()
+        uses: rtCamp/action-slack-notify@v2.0.1
+        env:
+          SLACK_COLOR: "good"
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_TITLE: "${{ github.repository }}"
+          SLACK_MESSAGE: ":100: Success: *${{ github.workflow }}*\n- <https://github.com/${{  github.repository }}/commit/${{ github.sha }}|${{ github.event.commits[0].message }}> by ${{ github.actor }}"
+      - name: Slack failure
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.0.1
+        env:
+          SLACK_COLOR: "#FF0000"
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_TITLE: "${{ github.repository }}"
+          SLACK_MESSAGE: ":-1: Failed: *${{ github.workflow }}*\n- <https://github.com/${{  github.repository }}/commit/${{ github.sha }}|${{ github.event.commits[0].message }}> by ${{ github.actor }}"

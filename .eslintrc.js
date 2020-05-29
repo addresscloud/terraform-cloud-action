@@ -7,6 +7,7 @@ module.exports = {
         "no-ternary": 0,
         "arrow-body-style": 0,
         "prefer-destructuring": 0,
-        "require-await": 0
+        "require-await": 0,
+        "max-params": [ "warn" ]
     }
 };

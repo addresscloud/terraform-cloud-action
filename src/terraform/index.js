@@ -9,12 +9,15 @@ export default class Terraform {
     /**
      * Terraform Cloud class.
      * 
-     * @param {string} token - Terraform Cloud token.
-     * @param {string} org - Terraform Cloud organization.
-     * @param {string} [address=`app.terraform.com`] - Terraform Cloud address.
-     * @param {number} [retryDuration=1000] - Duration (ms) to wait before retrying configuration version request.
+     * @param {string}  token - Terraform Cloud token.
+     * @param {string}  org - Terraform Cloud organization.
+     * @param {string}  [address=`app.terraform.com`] - Terraform Cloud address.
+     * @param {number}  [retryDuration=1000] - Duration (ms) to wait before retrying configuration version request.
+     * @param {number}  [retryLimit=5] - Maximum number of retries for API calls.
+     * @param {number}  [pollInterval=60000] - Duration (ms) to wait before retrying run status request.
+     * @param {boolean} [debug=false] - Toggle additional log messages.
      */
-    constructor(token, org, address = `app.terraform.io`, retryDuration = 1000) {
+    constructor(token, org, address = `app.terraform.io`, retryDuration = 1000, retryLimit = 5, pollInterval = 60000, debug = false) {
         this.axios = axios.create({
             baseURL: `https://${address}/api/v2`,
             headers: {
@@ -25,9 +28,9 @@ export default class Terraform {
         })
         this.retryDuration = retryDuration
         this.org = org
-        this.retryLimit = 3
-        this.maxStatusPolls = 5
-        this.debug = true
+        this.retryLimit = retryLimit
+        this.pollInterval = pollInterval
+        this.debug = debug
     }
 
     /**
@@ -173,7 +176,10 @@ export default class Terraform {
                 throw new Error('Run Id not found.')
             }
             
-            return res.data.data.id
+            const runId = res.data.data.id
+            const status = res.data.data.attributes.status
+
+            return { runId, status }
             
         } catch (err) {
                 let message = `Error requesting the run: ${err.message}`
@@ -184,21 +190,30 @@ export default class Terraform {
         }
     }
 
+    /**
+     * Requests status of run.
+     * 
+     * @param {string} runId - Run Id.
+     * @returns {string} - Status.
+     */
     async _poll(runId) {
         try {
-            // let status
             let counter = 0
-            while (counter < this.maxStatusPolls) {
+            let lastStatus = null
+            while (counter < this.retryLimit) {
                 const res = await this.axios.get(`/runs/${runId}`)
-                this.debug && console.log(JSON.stringify(res.data.data))
-                this.debug && console.log(`will now sleep.`)
+                const status = res.data.data.attributes
+                if (status === 'planned_and_finished' || status === 'applied') {
+                    return status
+                }
+                lastStatus = status
+                this.debug && console.log(`Plan not finished/applied. Will now sleep for ${this.pollInterval}`)
                 counter += 1
-                await this._sleep(60000)
-                // status  = res.data.data.attributes.status
+                await this._sleep(this.pollInterval)
             }
-            // return status
+            throw new Error(`Run status was ${lastStatus}`)
         } catch (err) {
-            let message = `Error requesting run status: ${err.message}`
+            let message = `Error requesting run status. ${err.message}`
             if (err.response) {
                 message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
             }
@@ -212,16 +227,18 @@ export default class Terraform {
      * @param {string} workspace - Workspace name.
      * @param {string} filePath - Path to tar.gz file with Terraform configuration.
      * @param {string} identifier - Unique identifier for the run (e.g. git commit).
+     * @param {boolean} [awaitApply = false] - Wait until plan complete or applied before returning.
      * @returns {string} - The Id of the new run.
      */
-    async run(workspace, filePath, identifier) {
+    async run(workspace, filePath, identifier, awaitApply = false) {
 
         const workspaceId = await this._checkWorkspace(workspace)
         const {id, uploadUrl} = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(id, uploadUrl, filePath)
-        const runId = await this._run(workspaceId, identifier)
-        this._poll(runId)
-        return runId
+        let { runId, status } = await this._run(workspaceId, identifier)
+        if (awaitApply) { status = await this._poll(runId) }
+
+        return { runId, status }
     }
 }
 

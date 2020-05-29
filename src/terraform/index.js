@@ -26,6 +26,8 @@ export default class Terraform {
         this.retryDuration = retryDuration
         this.org = org
         this.retryLimit = 3
+        this.maxStatusPolls = 5
+        this.debug = true
     }
 
     /**
@@ -179,6 +181,28 @@ export default class Terraform {
                     message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
                 }
                 throw new Error(message)
+        }
+    }
+
+    async _poll(runId) {
+        try {
+            // let status
+            let counter = 0
+            while (counter < this.maxStatusPolls) {
+                const res = await this.axios.get(`/runs/${runId}`)
+                this.debug && console.log(JSON.stringify(res.data.data))
+                this.debug && console.log(`will now sleep.`)
+                counter += 1
+                await this._sleep(60000)
+                // status  = res.data.data.attributes.status
+            }
+            // return status
+        } catch (err) {
+            let message = `Error requesting run status: ${err.message}`
+            if (err.response) {
+                message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
+            }
+            throw new Error(message)
         }
     }
 

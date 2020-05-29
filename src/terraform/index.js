@@ -202,7 +202,7 @@ export default class Terraform {
             let lastStatus = null
             while (counter < this.retryLimit) {
                 const res = await this.axios.get(`/runs/${runId}`)
-                const status = res.data.data.attributes
+                const status = res.data.data.attributes.status
                 if (status === 'planned_and_finished' || status === 'applied') {
                     return status
                 }

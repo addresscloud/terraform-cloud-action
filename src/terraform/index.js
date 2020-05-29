@@ -220,7 +220,7 @@ export default class Terraform {
         const {id, uploadUrl} = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(id, uploadUrl, filePath)
         const runId = await this._run(workspaceId, identifier)
-        
+        this._poll(runId)
         return runId
     }
 }

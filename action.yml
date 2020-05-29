@@ -14,10 +14,14 @@ inputs:
     description: 'Archive (.tar.gz) to submit.'
   identifier:
     description: 'Unique identifier for workflow (e.g. Git SHA)'
+  awaitApply:
+    description: 'Wait for apply to complete.'
   
 outputs:
   runId: # id of output
     description: 'The Id of the run.'
+  status:
+    description: 'Status of the run.'
 
 runs:
   using: 'node12'

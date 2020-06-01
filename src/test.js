@@ -7,17 +7,16 @@ import Terraform from './terraform'
 describe('Action test suite', () => {
 
     it('can succesfully initiate a run and return workspace', async() => {
-        let workspace = "__PRETEST__"
-        const stubRun = sinon.stub(Terraform.prototype, 'run').returns('id_1')
+        let workspace = { runId: null, status: "__PRETEST__" }
+        const stubRun = sinon.stub(Terraform.prototype, 'run').returns({runId: '1', status: 'applied'})
         const stubGh = sinon.stub(core, 'setOutput').callsFake((key, prop) => {
-            workspace = {}
             workspace[key] = prop
         })
         const run = require('./index')
         await run.default()
         stubRun.restore()
         stubGh.restore()
-        expect(workspace).to.deep.equal({runId: 'id_1'})
+        expect({runId: '1', status: 'applied'}).to.deep.equal(workspace)
     })
 
     it('can succesfully catch an error', async() => {

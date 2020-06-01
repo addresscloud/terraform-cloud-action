@@ -14,14 +14,17 @@ describe('Terraform _run test suite', () => {
         const stub = sinon.stub(terraform.axios, 'post').returns({
             data: {
                 data: {
-                    id: '1'
+                    id: '1',
+                    attributes: {
+                        status: 'applied'
+                    }
                 }
             }
 
         })
         const res = await terraform._run('1', 'id')
         stub.restore()
-        expect(res).to.equal('1')
+        expect({runId: '1', status: 'applied'}).to.deep.equal(res)
     })
 
     it('catches no data returned', async() => {

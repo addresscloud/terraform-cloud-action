@@ -11,10 +11,10 @@ export default async function main() {
               awaitApply = core.getInput('awaitApply')
 
         const tf = new Terraform(token, org)
-        const { id, status } = await tf.run(workspace, filePath, identifier.slice(0, 7), awaitApply)
-        console.log(`Workspace run submitted succesfully: https://app.terraform.io/app/${org}/workspaces/${workspace}/runs/${id}`)
+        const { runId, status } = await tf.run(workspace, filePath, identifier.slice(0, 7), awaitApply)
+        console.log(`Workspace run submitted succesfully: https://app.terraform.io/app/${org}/workspaces/${workspace}/runs/${runId}`)
         console.log(`Run status: ${status}`)
-        core.setOutput("runId", id);
+        core.setOutput("runId", runId);
         core.setOutput("status", status);
     } catch (error) {
         core.setFailed(error.message);

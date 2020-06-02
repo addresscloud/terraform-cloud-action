@@ -191,26 +191,34 @@ export default class Terraform {
 
     /**
      * Requests status of run.
+     * @param {string} runId - Run Id.
+     * @returns {string} - status. 
+     */
+    async _getStatus(runId){
+        const res = await this.axios.get(`/runs/${runId}`)
+        return res.data.data.attributes.status
+    }
+
+    /**
+     * Repeatedly polls status of run.
      * 
      * @param {string} runId - Run Id.
      * @returns {string} - Status.
      */
     async _poll(runId) {
         try {
-            let counter = 0
-            let lastStatus = null
-            while (counter < this.retryLimit) {
-                const res = await this.axios.get(`/runs/${runId}`)
-                const status = res.data.data.attributes.status
+            for (let i = 0; i < this.retryLimit; i++) {
+                const status = await this._getStatus(runId)
                 if (status === 'planned_and_finished' || status === 'applied') {
+
                     return status
                 }
-                lastStatus = status
+                if ( i = this.retryLimit - 1) {
+                    throw new Error(`Run status was ${JSON.stringify(status)}`)
+                }
                 this.debug && console.log(`Plan not finished/applied. Will now sleep for ${this.pollInterval}`)
-                counter += 1
                 await this._sleep(this.pollInterval)
             }
-            throw new Error(`Run status was ${lastStatus}`)
         } catch (err) {
             let message = `Error requesting run status. ${err.message}`
             if (err.response) {

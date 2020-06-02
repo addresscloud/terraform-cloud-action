@@ -29,10 +29,6 @@ inputs:
     description: 'Number of times to retry Terraform Cloud API requests.'
     required: false
     default: 5
-  debug:
-    description: 'Enable optional debug logging.'
-    required: false
-    default: false
   
 outputs:
   runId: # id of output

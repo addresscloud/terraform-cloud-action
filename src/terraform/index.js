@@ -191,11 +191,13 @@ export default class Terraform {
 
     /**
      * Requests status of run.
+     * 
      * @param {string} runId - Run Id.
-     * @returns {string} - status. 
+     * @returns {string} - Status. 
      */
-    async _getStatus(runId){
+    async _getStatus(runId) {
         const res = await this.axios.get(`/runs/${runId}`)
+
         return res.data.data.attributes.status
     }
 
@@ -213,15 +215,14 @@ export default class Terraform {
 
                     return status
                 }
-                if ( i === this.retryLimit - 1) {
+                if (i === this.retryLimit - 1) {
                     throw new Error(`Run status was ${JSON.stringify(status)}`)
                 }
                 this.debug && console.log(`Plan not finished/applied. Will now sleep for ${this.pollInterval}`)
                 await this._sleep(this.pollInterval)
             }
         } catch (err) {
-            let message = `Error requesting run status. ${err.message}`
-            throw new Error(message)
+            throw new Error(`Error requesting run status. ${err.message}`)
         }
     }
 
@@ -231,7 +232,7 @@ export default class Terraform {
      * @param {string} workspace - Workspace name.
      * @param {string} filePath - Path to tar.gz file with Terraform configuration.
      * @param {string} identifier - Unique identifier for the run (e.g. git commit).
-     * @param {boolean} [awaitApply = false] - Wait until plan complete or applied before returning.
+     * @param {boolean} [awaitApply=false] - Wait until plan complete or applied before returning.
      * @returns {string} - The Id of the new run.
      */
     async run(workspace, filePath, identifier, awaitApply = false) {

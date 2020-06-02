@@ -8,6 +8,9 @@ module.exports = {
         "arrow-body-style": 0,
         "prefer-destructuring": 0,
         "require-await": 0,
-        "max-params": [ "warn" ]
+        "max-params": [ "warn" ],
+        "consistent-return": [ "warn" ],
+        "no-plusplus": 0,
+        "prefer-const": ["warn"]
     }
 };

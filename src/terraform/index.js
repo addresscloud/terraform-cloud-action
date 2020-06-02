@@ -213,7 +213,7 @@ export default class Terraform {
 
                     return status
                 }
-                if ( i = this.retryLimit - 1) {
+                if ( i === this.retryLimit - 1) {
                     throw new Error(`Run status was ${JSON.stringify(status)}`)
                 }
                 this.debug && console.log(`Plan not finished/applied. Will now sleep for ${this.pollInterval}`)
@@ -221,9 +221,6 @@ export default class Terraform {
             }
         } catch (err) {
             let message = `Error requesting run status. ${err.message}`
-            if (err.response) {
-                message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
-            }
             throw new Error(message)
         }
     }

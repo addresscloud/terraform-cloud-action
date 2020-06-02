@@ -10,12 +10,29 @@ inputs:
     required: true
   tfWorkspace:
     description: Terraform Cloud Workspace.'
+    required: true
   filePath:
     description: 'Archive (.tar.gz) to submit.'
+    required: true
   identifier:
     description: 'Unique identifier for workflow (e.g. Git SHA)'
+    required: true
   awaitApply:
     description: 'Wait for apply to complete.'
+    required: false
+    default: false
+  awaitInterval:
+    description: 'Duration to wait between subsequent status requests (seconds).'
+    required: false
+    default: 60
+  retryLimit:
+    description: 'Number of times to retry Terraform Cloud API requests.'
+    required: false
+    default: 5
+  debug:
+    description: 'Enable optional debug logging.'
+    required: false
+    default: false
   
 outputs:
   runId: # id of output

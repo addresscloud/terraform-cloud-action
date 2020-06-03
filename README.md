@@ -37,33 +37,23 @@ The inputs below are required by the action to submit the run to Terraform Cloud
 
 #### `tfToken`
  
-**Required** 
-
-Terraform Cloud access token.
+**Required** - Terraform Cloud access token.
 
 #### `tfOrganization`
 
-**Required** 
-
-Terraform Cloud Organization.
+**Required** - Terraform Cloud Organization.
 
 #### `tfWorkspace`
 
-**Required** 
-
-Name of existing Terraform Cloud workspace.
+**Required** - Name of existing Terraform Cloud workspace.
 
 #### `filePath`
 
-**Required** 
-
-Path to .tar.gz archive with Terraform configuration.
+**Required** - Path to .tar.gz archive with Terraform configuration.
 
 #### `identifier`
 
-**Required** 
-
-Unique identifier for the run (e.g. git commit sha). Reduced to 7 characters for brevity.
+**Required** - Unique identifier for the run (e.g. git commit sha). Reduced to 7 characters for brevity.
 
 #### `awaitApply`
 

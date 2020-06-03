@@ -4,7 +4,7 @@
 
 > An action to run Terraform Cloud workspaces
 
-This action submits a run to a Terraform Cloud workspace which performs a plan and apply. Once the run is succesfully submitted the action returns a success, leaving the plan and apply to continue to run in Terraform Cloud.
+This action submits a run to a Terraform Cloud workspace which performs a plan and apply. The action can be configured to return a success once the run is succesfully submitted, or it can wait for the plan to be applied by periodically polling Terraform Cloud for run status updates.
 
 ## Table of Contents
 
@@ -31,8 +31,6 @@ Terraform Cloud requires a .tar.gz archive containing the Terraform configuratio
     identifier: ${{ github.sha }}
 ```
 
-![Example workflow](example.png)
-
 ### Inputs
 
 The inputs below are required by the action to submit the run to Terraform Cloud. Additional workspace variables and settings should be configured using the Terraform Cloud UI. 
@@ -43,7 +41,7 @@ The inputs below are required by the action to submit the run to Terraform Cloud
 
 #### `tfOrganization`
 
-**Required** - Terraform Cloud organization.
+**Required** - Terraform Cloud Organization.
 
 #### `tfWorkspace`
 
@@ -57,11 +55,30 @@ The inputs below are required by the action to submit the run to Terraform Cloud
 
 **Required** - Unique identifier for the run (e.g. git commit sha). Reduced to 7 characters for brevity.
 
+#### `awaitApply`
+
+Wait for run to apply before completing. 
+***Default*** - false
+
+#### `awaitInterval`
+
+Duration to wait (seconds) between sunsequent run status requests.
+***Default*** - 60
+
+#### `retryLimit`
+
+Number of times to retry Terraform Cloud API requests.
+***Default*** - 5
+
 ### Outputs
 
 #### `runId` 
 
 The identfier of the run in Terraform Cloud.
+
+#### `status`
+
+The status of the run in Terraform Cloud.
 
 ### Notes
 
@@ -94,4 +111,4 @@ This Action was based on the example Terraform Enterprise script at: https://git
 
 ## License
 
-MPL-2.0 © 2019 Addresscloud Limited
+MPL-2.0 © 2020 Addresscloud Limited

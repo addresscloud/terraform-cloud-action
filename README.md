@@ -31,6 +31,26 @@ Terraform Cloud requires a .tar.gz archive containing the Terraform configuratio
     identifier: ${{ github.sha }}
 ```
 
+If the `awaitApply` variable is set then once a run is confirmed the Action will poll Terraform Cloud and return success when the run status is either `planned_and_finished` or `applied`. In this example the Action will poll for updates every 60 seconds, for a maximum of 5 times. If the limit is reached before the run is complete the Action will return an error.
+
+```yml
+- name: Create tar gz file
+  run: tar --exclude *.terraform* -zcvf build.tar.gz build infrastructure
+
+- name: Terraform Cloud
+  uses: addresscloud/terraform-cloud-action@v1.0.0
+  with:
+    tfToken: ${{ secrets.TERRAFORM_TOKEN }}
+    tfOrg: '<ORGANISATION>'
+    tfWorkspace: 'my-lambda-service'
+    filePath: './build.tar.gz'
+    identifier: ${{ github.sha }}
+    awaitApply: true
+    awaitInterval: 60
+    retryLimit: 5
+```
+
+
 ### Inputs
 
 The inputs below are required by the action to submit the run to Terraform Cloud. Additional workspace variables and settings should be configured using the Terraform Cloud UI. 

@@ -37,38 +37,51 @@ The inputs below are required by the action to submit the run to Terraform Cloud
 
 #### `tfToken`
  
-**Required** - Terraform Cloud access token.
+**Required** 
+
+Terraform Cloud access token.
 
 #### `tfOrganization`
 
-**Required** - Terraform Cloud Organization.
+**Required** 
+
+Terraform Cloud Organization.
 
 #### `tfWorkspace`
 
-**Required** - Name of existing Terraform Cloud workspace.
+**Required** 
+
+Name of existing Terraform Cloud workspace.
 
 #### `filePath`
 
-**Required** - Path to .tar.gz archive with Terraform configuration.
+**Required** 
+
+Path to .tar.gz archive with Terraform configuration.
 
 #### `identifier`
 
-**Required** - Unique identifier for the run (e.g. git commit sha). Reduced to 7 characters for brevity.
+**Required** 
+
+Unique identifier for the run (e.g. git commit sha). Reduced to 7 characters for brevity.
 
 #### `awaitApply`
 
-Wait for run to apply before completing. 
-***Default*** - false
+Wait for run to apply before completing.
+
+Default: false
 
 #### `awaitInterval`
 
 Duration to wait (seconds) between sunsequent run status requests.
-***Default*** - 60
+
+Default: 60
 
 #### `retryLimit`
 
 Number of times to retry Terraform Cloud API requests.
-***Default*** - 5
+
+Default: 5
 
 ### Outputs
 
@@ -80,14 +93,14 @@ The identfier of the run in Terraform Cloud.
 
 The status of the run in Terraform Cloud.
 
-### Notes
+### Note on Terraform Modules
 
 If your repository contains multiple modules, upload the top-level directory and configure the root workspace path in the Terraform Cloud UI. For example, to deploy 
 `infrastructure/dev/services/lambda/main.tf` which has references to modules in `infrastructure/modules/services/lambda/module.tf` upload the entire `infrastructure` directory and configure `infrastructure/dev/services/lambda/` as the root of the workspace in the Terraform Cloud UI.
 
 ## Maintainers
 
-[@talltom](https://github.com/talltom)
+[@tomasholderness](https://github.com/tomasholderness)
 
 ## Contributing
 

@@ -12,12 +12,13 @@ export default class Terraform {
      * @param {string}  token - Terraform Cloud token.
      * @param {string}  org - Terraform Cloud organization.
      * @param {string}  [address=`app.terraform.com`] - Terraform Cloud address.
-     * @param {number}  [retryDuration=1000] - Duration (ms) to wait before retrying configuration version request.
+     * @param {boolean} [awaitApply=false] - Wait until plan status is complete or applied before returning.
      * @param {number}  [retryLimit=5] - Maximum number of retries for API calls.
-     * @param {number}  [pollInterval=60000] - Duration (ms) to wait before retrying run status request.
+     * @param {number}  [pollInterval=60000] - Duration (ms) to wait before retrying plan status request.
+     * @param {number}  [uploadRetryInterval=1000] - Duration (ms) to wait before retrying configuration version request.
      * @param {boolean} [debug=false] - Toggle additional log messages.
      */
-    constructor(token, org, address = `app.terraform.io`, retryDuration = 1000, retryLimit = 5, pollInterval = 60000, debug = false) {
+    constructor(token, org, address = `app.terraform.io`, awaitApply = false, retryLimit = 5, pollInterval = 60000, uploadRetryInterval = 1000, debug = false) {
         this.axios = axios.create({
             baseURL: `https://${address}/api/v2`,
             headers: {
@@ -26,10 +27,11 @@ export default class Terraform {
             },
             maxContentLength: Infinity
         })
-        this.retryDuration = retryDuration
         this.org = org
+        this.awaitApply = awaitApply
         this.retryLimit = retryLimit
         this.pollInterval = pollInterval
+        this.uploadRetryInterval = uploadRetryInterval
         this.debug = debug
     }
 
@@ -126,7 +128,7 @@ export default class Terraform {
 
             while (status === 'pending') {
                 if (counter < this.retryLimit) {
-                    await this._sleep(this.retryDuration)
+                    await this._sleep(this.uploadRetryInterval)
                     status = await this._getConfigVersionStatus(configId)
                     counter += 1
                 } else {
@@ -232,16 +234,15 @@ export default class Terraform {
      * @param {string} workspace - Workspace name.
      * @param {string} filePath - Path to tar.gz file with Terraform configuration.
      * @param {string} identifier - Unique identifier for the run (e.g. git commit).
-     * @param {boolean} [awaitApply=false] - Wait until plan complete or applied before returning.
      * @returns {string} - The Id of the new run.
      */
-    async run(workspace, filePath, identifier, awaitApply = false) {
+    async run(workspace, filePath, identifier) {
 
         const workspaceId = await this._checkWorkspace(workspace)
         const {id, uploadUrl} = await this._createConfigVersion(workspaceId)
         await this._uploadConfiguration(id, uploadUrl, filePath)
         let { runId, status } = await this._run(workspaceId, identifier)
-        if (awaitApply) { status = await this._poll(runId) }
+        if (this.awaitApply) { status = await this._poll(runId) }
 
         return { runId, status }
     }

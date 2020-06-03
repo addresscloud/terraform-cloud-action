@@ -10,9 +10,9 @@ export default async function main() {
               identifier = core.getInput('identifier'),
               awaitApply = core.getInput('awaitApply'),
               awaitInterval = core.getInput('awaitInterval') * 1000,
-              retryLimit = core.getInput('retryLimit'),
+              retryLimit = core.getInput('retryLimit')
 
-        const tf = new Terraform(token, org, 1000, retryLimit, awaitInterval)
+        const tf = new Terraform(token, org, retryLimit, awaitInterval)
         const { runId, status } = await tf.run(workspace, filePath, identifier.slice(0, 7), awaitApply)
         console.log(`Workspace run submitted succesfully: https://app.terraform.io/app/${org}/workspaces/${workspace}/runs/${runId}`)
         console.log(`Run status: ${status}`)

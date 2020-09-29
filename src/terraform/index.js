@@ -65,7 +65,7 @@ export default class Terraform {
 
             return res.data.data.id
         } catch (err) {
-            throw new Error(`Error checking the workspace: ${err.message}. Workspace: ${workspace}. Error: ${JSON.stringify(err)}`)
+            throw new Error(`Error checking the workspace: ${err.message}`)
         }
     }
 
@@ -125,7 +125,7 @@ export default class Terraform {
         try {
             let res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
             // Wait for TFC to update to avoid ECONNRESET - this could be neater.
-            console.log(`Sleeping for TFC 1000ms`)
+            console.log(`Sleeping for TFC ${this.tfcInterval} ms.`)
             await this._sleep(this.tfcInterval)
             let status = await this._getConfigVersionStatus(configId),
                 counter = 0
@@ -145,7 +145,7 @@ export default class Terraform {
             }
 
         } catch (err) {
-            throw new Error(`Error uploading the configuration: ${err.message}. configId: ${configId}, uploadUrl: ${uploadUrl}, filePath: ${filePath}`)
+            throw new Error(`Error uploading the configuration: ${err.message}.`)
         }
     }
 
@@ -228,7 +228,7 @@ export default class Terraform {
                 await this._sleep(this.pollInterval)
             }
         } catch (err) {
-            throw new Error(`Error requesting run status. ${err.message}. runId: ${JSON.stringify(runId)}. Error: ${JSON.stringify(err)}`)
+            throw new Error(`Error requesting run status. ${err.message}`)
         }
     }
 

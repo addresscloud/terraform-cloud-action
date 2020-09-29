@@ -124,9 +124,7 @@ export default class Terraform {
     async _uploadConfiguration(configId, uploadUrl, filePath) {
         try {
             let res = await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
-            console.error(`Put result: ${JSON.stringify(res)}`)
-            // Wait for TFC to update.
-            console.error('waiting for TFC to update')
+            // Wait for TFC to update to avoid ECONNRESET - this could be neater.
             await this._sleep(this.tfcInterval)
             let status = await this._getConfigVersionStatus(configId),
                 counter = 0
@@ -182,7 +180,7 @@ export default class Terraform {
             } else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
             }
-            const runId = res.data.data.id
+            const runId = res.data
             const status = res.data.data.attributes.status
 
             return { runId, status }

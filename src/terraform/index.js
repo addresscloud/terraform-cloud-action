@@ -181,7 +181,7 @@ export default class Terraform {
             } else if (!res.data.data.id) {
                 throw new Error('Run Id not found.')
             }
-            const runId = res.data
+            const runId = res.data.data.id
             const status = res.data.data.attributes.status
 
             return { runId, status }

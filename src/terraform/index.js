@@ -65,7 +65,7 @@ export default class Terraform {
 
             return res.data.data.id
         } catch (err) {
-            throw new Error(`Error checking the workspace: ${err.message}. Workspace: ${workspace}`)
+            throw new Error(`Error checking the workspace: ${err.message}. Workspace: ${workspace}. Error: ${JSON.stringify(err)}`)
         }
     }
 

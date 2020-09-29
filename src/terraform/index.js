@@ -33,6 +33,7 @@ export default class Terraform {
         this.pollInterval = pollInterval
         this.uploadRetryInterval = uploadRetryInterval
         this.debug = debug
+        this.tfcInterval = 500
     }
 
     /**
@@ -123,6 +124,8 @@ export default class Terraform {
     async _uploadConfiguration(configId, uploadUrl, filePath) {
         try {
             await this.axios.put(uploadUrl, fs.createReadStream(filePath), {headers: {'Content-Type': `application/octet-stream`}})
+            // Wait for TFC to update.
+            await this._sleep(this.tfcInterval)
             let status = await this._getConfigVersionStatus(configId),
                 counter = 0
 

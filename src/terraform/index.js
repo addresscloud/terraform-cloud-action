@@ -228,7 +228,7 @@ export default class Terraform {
                 await this._sleep(this.pollInterval)
             }
         } catch (err) {
-            throw new Error(`Error requesting run status. ${err.message}`)
+            throw new Error(`Error requesting run status. ${err.message}. runId: ${runId}. Error: ${err}`)
         }
     }
 

@@ -65,7 +65,7 @@ export default class Terraform {
 
             return res.data.data.id
         } catch (err) {
-            throw new Error(`Error checking the workspace: ${err.message}`)
+            throw new Error(`Error checking the workspace: ${err.message}. Workspace: ${workspace}`)
         }
     }
 
@@ -146,7 +146,7 @@ export default class Terraform {
             }
 
         } catch (err) {
-            throw new Error(`Error uploading the configuration: ${err.message}`)
+            throw new Error(`Error uploading the configuration: ${err.message}. configId: ${configId}, uploadUrl: ${uploadUrl}, filePath: ${filePath}`)
         }
     }
 

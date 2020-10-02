@@ -23,8 +23,7 @@ export default class Terraform {
             baseURL: `https://${address}/api/v2`,
             headers: {
                 'Authorization': `bearer ${token}`,
-                'Content-Type': `application/vnd.api+json`,
-                'Host': `${address}`           
+                'Content-Type': `application/vnd.api+json`         
             },
             maxContentLength: Infinity
         })
@@ -66,7 +65,7 @@ export default class Terraform {
 
             return res.data.data.id
         } catch (err) {
-            throw new Error(`Error checking the workspace: ${err.message}`)
+            throw new Error(`Error checking the workspace: ${err.message}\n${JSON.stringify(err)}`)
         }
     }
 
@@ -82,7 +81,7 @@ export default class Terraform {
 
             return res.data.data.attributes.status
         } catch (err) {
-            throw new Error(`Error getting configuration version: ${err.message}`)
+            throw new Error(`Error getting configuration version: ${err.message}\n${JSON.stringify(err)}`)
         }
     }
 
@@ -111,7 +110,7 @@ export default class Terraform {
             return { id: configVersion.id, uploadUrl: configVersion.attributes['upload-url']}
 
         } catch (err) {
-            throw new Error(`Error creating the config version: ${err.message}`)
+            throw new Error(`Error creating the config version: ${err.message}\n${JSON.stringify(err)}`)
         }
     }
 
@@ -146,7 +145,7 @@ export default class Terraform {
             }
 
         } catch (err) {
-            throw new Error(`Error uploading the configuration: ${err.message}.`)
+            throw new Error(`Error uploading the configuration: ${err.message}\n${JSON.stringify(err)}.`)
         }
     }
 
@@ -188,7 +187,7 @@ export default class Terraform {
             return { runId, status }
             
         } catch (err) {
-                let message = `Error requesting the run: ${err.message}`
+                let message = `Error requesting the run: ${err.message}\n${JSON.stringify(err)}`
                 if (err.response) {
                     message += `\nResponse: ${JSON.stringify(err.response.data ? err.response.data.errors : null)}`
                 }
@@ -229,7 +228,7 @@ export default class Terraform {
                 await this._sleep(this.pollInterval)
             }
         } catch (err) {
-            throw new Error(`Error requesting run status. ${err.message}`)
+            throw new Error(`Error requesting run status. ${err.message}\n${JSON.stringify(err)}`)
         }
     }
 

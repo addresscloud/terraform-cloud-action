@@ -23,7 +23,8 @@ export default class Terraform {
             baseURL: `https://${address}/api/v2`,
             headers: {
                 'Authorization': `bearer ${token}`,
-                'Content-Type': `application/vnd.api+json`              
+                'Content-Type': `application/vnd.api+json`,
+                'Host': `${address}`           
             },
             maxContentLength: Infinity
         })

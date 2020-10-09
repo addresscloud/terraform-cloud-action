@@ -25,7 +25,9 @@ export default class Terraform {
                 'Authorization': `bearer ${token}`,
                 'Content-Type': `application/vnd.api+json`         
             },
-            maxContentLength: Infinity
+            maxContentLength: Infinity,
+            timeout: 5000,
+            no_proxy: '*.terraform.io'
         })
         this.org = org
         this.awaitApply = awaitApply

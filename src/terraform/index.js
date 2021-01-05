@@ -27,7 +27,7 @@ export default class Terraform {
             },
             maxContentLength: Infinity,
             timeout: 5000,
-            no_proxy: '*.terraform.io'
+            no_proxy: '*.terraform.io' // eslint-disable-line camelcase
         })
         this.org = org
         this.awaitApply = awaitApply

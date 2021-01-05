@@ -27,7 +27,7 @@
   "homepage": "https://github.com/addresscloud/terraform-cloud-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "axios": "^0.19.2"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@addresscloud/eslint-config": "0.0.3",

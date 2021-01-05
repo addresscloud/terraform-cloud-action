@@ -57,7 +57,7 @@ describe('Terraform _poll test suite', () => {
         }
         expect(3).to.equal(getStatusCounter)
         expect(2).to.equal(sleepCounter)
-        expect('Error requesting run status. Run status was "not_applied"').to.equal(message)
+        expect('Error requesting run status. Run status was "not_applied"\n{}').to.equal(message)
         stubGetStatus.restore()
         stubSleep.restore()
     })

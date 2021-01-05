@@ -37,7 +37,7 @@ describe('Terraform _createConfigVersion test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error creating the config version: No configuration returned from request.')
+        expect(message).to.equal('Error creating the config version: No configuration returned from request.\n{}')
     })
 
     it('catches axios error', async() => {
@@ -49,7 +49,7 @@ describe('Terraform _createConfigVersion test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('Error creating the config version: Axios error.')
+        expect(message).to.equal('Error creating the config version: Axios error.\n{}')
         stub.restore()
     })
 

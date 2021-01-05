@@ -33,7 +33,8 @@ describe('Terraform _checkWorkspace test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error checking the workspace: Workspace name should not contain spaces.')
+        console.log(message)
+        expect(message).to.equal('Error checking the workspace: Workspace name should not contain spaces.\n{}')
     })
 
     it('catches no data returned', async() => {
@@ -46,7 +47,7 @@ describe('Terraform _checkWorkspace test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error checking the workspace: No data returned from request.')
+        expect(message).to.equal('Error checking the workspace: No data returned from request.\n{}')
     })
 
     it('catches no id returned', async() => {
@@ -59,7 +60,7 @@ describe('Terraform _checkWorkspace test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error checking the workspace: Workspace not found.')
+        expect(message).to.equal('Error checking the workspace: Workspace not found.\n{}')
     })
 
     it('catches axios error', async() => {
@@ -72,7 +73,7 @@ describe('Terraform _checkWorkspace test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error checking the workspace: Axios error.')
+        expect(message).to.equal('Error checking the workspace: Axios error.\n{}')
     })
 
 })

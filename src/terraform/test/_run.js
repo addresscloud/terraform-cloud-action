@@ -37,7 +37,7 @@ describe('Terraform _run test suite', () => {
             message = err.message
         }
         stub.restore()
-        expect(message).to.equal('Error requesting the run: No data returned from request.')
+        expect(message).to.equal('Error requesting the run: No data returned from request.\n{}')
     })
 
     it('catches no id returned', async() => {
@@ -49,7 +49,7 @@ describe('Terraform _run test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('Error requesting the run: Run Id not found.')
+        expect(message).to.equal('Error requesting the run: Run Id not found.\n{}')
     })
 
     it('catches axios error', async() => {
@@ -61,7 +61,7 @@ describe('Terraform _run test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('Error requesting the run: Axios error.')
+        expect(message).to.equal('Error requesting the run: Axios error.\n{}')
     })
 
     it('catches error with response', async() => {
@@ -79,6 +79,6 @@ describe('Terraform _run test suite', () => {
         } catch (err) {
             message = err.message
         }
-        expect(message).to.equal('Error requesting the run: Response error\nResponse: 500')
+        expect(message).to.equal('Error requesting the run: Response error\n{"response":{"data":{"errors":500}}}\nResponse: 500')
     })
 })

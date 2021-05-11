@@ -36,8 +36,9 @@ jobs:
 
       - name: Export Job id variable
         run: |
-          jobId=${{ github.sha }}
-          echo jobId=${jobId::7} >> $GITHUB_ENV
+          IFS='/'
+          read -a jobId <<< "$tag"
+          echo jobId=${jobId[2]} >> $GITHUB_ENV
 
       - name: Echo Job id variable
         run: |

@@ -36,11 +36,8 @@ jobs:
 
       - name: Export Job id variable
         run: |
-          sha=${{ github.sha }}
-          sha=${sha::7}
-          export JOB=$sha
-          echo "::set-env name=JOB::$JOB"
+          echo jobId=${{{ github.sha }}::7} >> $GITHUB_ENV
 
       - name: Echo Job id variable
         run: |
-          echo $JOB
+          echo {{ env.jobId }}

@@ -36,7 +36,7 @@ jobs:
 
       - name: Export Job id variable
         run: |
-          jobId=${{ github.event.ref }}
+          jobId=${GITHUB_REF#refs/tags/}
           echo $jobId >> $GITHUB_ENV
 
       - name: Echo Job id variable

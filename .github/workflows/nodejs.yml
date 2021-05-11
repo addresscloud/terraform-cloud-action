@@ -34,10 +34,11 @@ jobs:
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 
+      # Job ID based on truncated GH sha.
       - name: Export Job id variable
         run: |
-          jobId=${GITHUB_REF#refs/tags/}
-          echo $jobId >> $GITHUB_ENV
+          jobId=${{ github.sha }}
+          echo jobId=${jobId::7} >> $GITHUB_ENV
 
       - name: Echo Job id variable
         run: |

@@ -33,12 +33,3 @@ jobs:
         run: npm run coverage
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-
-      - name: Slack Notify
-        uses: 8398a7/action-slack@v3
-        with:
-          author_name: ${{ github.actor }} 
-          status: ${{ job.status }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }} # required
-        if: always() 

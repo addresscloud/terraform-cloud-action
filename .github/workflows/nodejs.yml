@@ -33,3 +33,14 @@ jobs:
         run: npm run coverage
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+
+      - name: Export Job id variable
+        run: |
+          sha=${{ github.sha }}
+          sha=${sha::7}
+          export JOB=$sha
+          echo "::set-env name=JOB::$JOB"
+
+      - name: Echo Job id variable
+        run: |
+          echo $JOB

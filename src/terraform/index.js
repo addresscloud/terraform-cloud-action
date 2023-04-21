@@ -26,7 +26,8 @@ export default class Terraform {
                 'Content-Type': `application/vnd.api+json`         
             },
             maxContentLength: Infinity,
-            timeout: 5000,
+            maxBodyLength: Infinity,
+            timeout: 30000,
             no_proxy: '*.terraform.io' // eslint-disable-line camelcase
         })
         this.org = org
